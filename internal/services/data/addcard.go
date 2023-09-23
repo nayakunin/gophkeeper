@@ -6,6 +6,6 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
-func (s *Service) AddCard(ctx context.Context, in *api.AddBankCardDetailRequest) (*api.AddBankCardDetailResponse, error) {
+func (s *Service) AddBankCardDetail(ctx context.Context, in *api.AddBankCardDetailRequest) (*api.AddBankCardDetailResponse, error) {
 	return nil, nil
 }

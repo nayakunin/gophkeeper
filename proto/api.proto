@@ -4,10 +4,14 @@ package gophkeeper;
 
 option go_package = "shortener/internal/generated";
 
-// The user service definition
-service UserService {
-  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+// The auth service definition
+service AuthService {
   rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse);
+}
+
+// The registration service definition
+service RegistrationService {
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
 }
 
 // The data service definition
@@ -19,7 +23,7 @@ service DataService {
   rpc GetData (GetDataRequest) returns (GetDataResponse);
 }
 
-// User-related requests and responses
+// Registration-related requests and responses
 message RegisterUserRequest {
   string username = 1;
   string email = 2;
@@ -31,6 +35,7 @@ message RegisterUserResponse {
   bool success = 2;
 }
 
+// Auth-related requests and responses
 message AuthenticateUserRequest {
   string username = 1;
   string password = 2;

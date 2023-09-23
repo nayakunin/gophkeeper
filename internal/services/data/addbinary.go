@@ -6,6 +6,6 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
-func (s *Service) AddBinary(ctx context.Context, in *api.AddBinaryDataRequest) (*api.AddBinaryDataResponse, error) {
+func (s *Service) AddBinaryData(ctx context.Context, in *api.AddBinaryDataRequest) (*api.AddBinaryDataResponse, error) {
 	return nil, nil
 }

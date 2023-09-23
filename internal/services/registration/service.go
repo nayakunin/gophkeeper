@@ -1,10 +1,12 @@
-package user
+package registration
 
-import api "github.com/nayakunin/gophkeeper/proto"
+import (
+	api "github.com/nayakunin/gophkeeper/proto"
+)
 
 // Service is a struct of the grpc.
 type Service struct {
-	api.UnimplementedUserServiceServer
+	api.UnimplementedRegistrationServiceServer
 }
 
 // NewService returns a new Service.
