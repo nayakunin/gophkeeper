@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"os"
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -12,6 +11,8 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/selector"
+	"github.com/nayakunin/gophkeeper/constants"
+	"github.com/nayakunin/gophkeeper/internal/database"
 	"github.com/nayakunin/gophkeeper/internal/middlewares"
 	authService "github.com/nayakunin/gophkeeper/internal/services/auth"
 	dataService "github.com/nayakunin/gophkeeper/internal/services/data"
@@ -21,8 +22,7 @@ import (
 )
 
 const (
-	component = "gophkeeper"
-	grpcAddr  = ":8080"
+	grpcAddr = constants.GrpcPort
 )
 
 // interceptorLogger adapts go-kit logger to interceptor logger.
@@ -46,12 +46,11 @@ func interceptorLogger(l log.Logger) logging.Logger {
 }
 
 func main() {
-	logger := log.NewLogfmtLogger(os.Stderr)
-	rpcLogger := log.With(logger, "service", "gRPC/server", "component", component)
+	//logger := log.NewLogfmtLogger(os.Stderr)
 
 	lis, err := net.Listen("tcp", grpcAddr)
 	if err != nil {
-		level.Error(logger).Log("err", err)
+		fmt.Println(err)
 	}
 
 	allButRegistration := func(ctx context.Context, callMeta interceptors.CallMeta) bool {
@@ -60,16 +59,22 @@ func main() {
 
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			logging.UnaryServerInterceptor(interceptorLogger(rpcLogger)),
 			selector.UnaryServerInterceptor(auth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButRegistration)),
 		))
 
-	api.RegisterRegistrationServiceServer(s, registrationService.NewService())
+	storage, err := database.NewStorage("postgres://postgres:postgres@localhost:5432/gophkeeper?sslmode=disable")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	api.RegisterRegistrationServiceServer(s, registrationService.NewService(storage))
 	api.RegisterAuthServiceServer(s, authService.NewService())
 	api.RegisterDataServiceServer(s, dataService.NewService())
 
-	level.Info(logger).Log("msg", "starting gRPC server", "addr", grpcAddr)
+	//level.Info(logger).Log("msg", "starting gRPC server", "addr", grpcAddr)
+	fmt.Println("starting gRPC server", "addr", grpcAddr)
 	if err := s.Serve(lis); err != nil {
-		level.Error(logger).Log("msg", "failed to serve", "err", err)
+		//level.Error(logger).Log("msg", "failed to serve", "err", err)
+		fmt.Println("failed to serve", "err", err)
 	}
 }

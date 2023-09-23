@@ -3,10 +3,14 @@ package database
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+// Timeout is a timeout for all db operations
+const Timeout = 5 * time.Second
 
 // DBPool is an interface for pgxpool.Pool
 type DBPool interface {
@@ -15,10 +19,7 @@ type DBPool interface {
 	Ping(ctx context.Context) error
 }
 
-// InitDBFunc is a function that is used to initialize database
-type InitDBFunc func(conn *pgxpool.Conn) error
-
-type DBStorage struct {
+type Storage struct {
 	Pool DBPool
 }
 
@@ -26,7 +27,6 @@ func initDB(conn *pgxpool.Conn) error {
 	if _, err := conn.Exec(context.Background(), `CREATE TABLE users (
 		id SERIAL PRIMARY KEY,
 		username VARCHAR(50) UNIQUE NOT NULL,
-		email VARCHAR(50) UNIQUE NOT NULL,
 		password_hash VARCHAR(256) NOT NULL,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
@@ -86,7 +86,7 @@ func initDB(conn *pgxpool.Conn) error {
 	return nil
 }
 
-func NewDBStorage(databaseURL string) (*DBStorage, error) {
+func NewStorage(databaseURL string) (*Storage, error) {
 	pool, err := pgxpool.New(context.Background(), databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("create db pool: %w", err)
@@ -101,7 +101,7 @@ func NewDBStorage(databaseURL string) (*DBStorage, error) {
 		return nil, fmt.Errorf("init db: %w", err)
 	}
 
-	return &DBStorage{
+	return &Storage{
 		Pool: pool,
 	}, nil
 }
