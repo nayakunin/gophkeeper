@@ -5,7 +5,7 @@ import (
 )
 
 type Storage interface {
-	CreateUser(user *api.RegisterUserRequest) error
+	CreateUser(username, passwordHash string) error
 }
 
 // Service is a struct of the grpc.

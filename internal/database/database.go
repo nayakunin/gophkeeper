@@ -24,7 +24,7 @@ type Storage struct {
 }
 
 func initDB(conn *pgxpool.Conn) error {
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE users (
+	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		username VARCHAR(50) UNIQUE NOT NULL,
 		password_hash VARCHAR(256) NOT NULL,
@@ -34,7 +34,7 @@ func initDB(conn *pgxpool.Conn) error {
 		return fmt.Errorf("create users table: %w", err)
 	}
 
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE login_password_pairs (
+	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS login_password_pairs (
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		service_name VARCHAR(50),
@@ -47,7 +47,7 @@ func initDB(conn *pgxpool.Conn) error {
 		return fmt.Errorf("create login_password_pairs table: %w", err)
 	}
 
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE text_data (
+	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS text_data (
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		description TEXT,
@@ -58,7 +58,7 @@ func initDB(conn *pgxpool.Conn) error {
 		return fmt.Errorf("create text_data table: %w", err)
 	}
 
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE binary_data (
+	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS binary_data (
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		description TEXT,
@@ -69,7 +69,7 @@ func initDB(conn *pgxpool.Conn) error {
 		return fmt.Errorf("create binary_data table: %w", err)
 	}
 
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE bank_card_details (
+	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS bank_card_details (
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		description TEXT,

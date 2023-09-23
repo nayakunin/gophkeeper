@@ -48,27 +48,28 @@ func interceptorLogger(l log.Logger) logging.Logger {
 func main() {
 	//logger := log.NewLogfmtLogger(os.Stderr)
 
-	lis, err := net.Listen("tcp", grpcAddr)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", grpcAddr))
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	allButRegistration := func(ctx context.Context, callMeta interceptors.CallMeta) bool {
-		return api.RegistrationService_ServiceDesc.ServiceName != callMeta.Service
+	allButAuth := func(ctx context.Context, callMeta interceptors.CallMeta) bool {
+		return api.RegistrationService_ServiceDesc.ServiceName != callMeta.Service && api.AuthService_ServiceDesc.ServiceName != callMeta.Service
 	}
 
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			selector.UnaryServerInterceptor(auth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButRegistration)),
+			selector.UnaryServerInterceptor(auth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButAuth)),
 		))
 
-	storage, err := database.NewStorage("postgres://postgres:postgres@localhost:5432/gophkeeper?sslmode=disable")
+	storage, err := database.NewStorage("postgresql://localhost:5432/postgres")
 	if err != nil {
 		fmt.Println(err)
+		panic(err)
 	}
 
 	api.RegisterRegistrationServiceServer(s, registrationService.NewService(storage))
-	api.RegisterAuthServiceServer(s, authService.NewService())
+	api.RegisterAuthServiceServer(s, authService.NewService(storage))
 	api.RegisterDataServiceServer(s, dataService.NewService())
 
 	//level.Info(logger).Log("msg", "starting gRPC server", "addr", grpcAddr)
