@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package gophkeeper;
+
+option go_package = "shortener/internal/generated";
+
+// The user service definition
+service UserService {
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+  rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse);
+}
+
+// The data service definition
+service DataService {
+  rpc AddLoginPasswordPair (AddLoginPasswordPairRequest) returns (AddLoginPasswordPairResponse);
+  rpc AddTextData (AddTextDataRequest) returns (AddTextDataResponse);
+  rpc AddBinaryData (AddBinaryDataRequest) returns (AddBinaryDataResponse);
+  rpc AddBankCardDetail (AddBankCardDetailRequest) returns (AddBankCardDetailResponse);
+  rpc GetData (GetDataRequest) returns (GetDataResponse);
+}
+
+// User-related requests and responses
+message RegisterUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message RegisterUserResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message AuthenticateUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthenticateUserResponse {
+  string token = 1;
+  bool success = 2;
+}
+
+// Data-related requests and responses
+message AddLoginPasswordPairRequest {
+  string service_name = 1;
+  string login = 2;
+  string password = 3;
+}
+
+message AddLoginPasswordPairResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message AddTextDataRequest {
+  string description = 1;
+  string encrypted_text = 2;
+}
+
+message AddTextDataResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message AddBinaryDataRequest {
+  string description = 1;
+  bytes encrypted_data = 2;
+}
+
+message AddBinaryDataResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message AddBankCardDetailRequest {
+  string card_name = 1;
+  string encrypted_card_number = 2;
+  string encrypted_expiry_date = 3;
+  string encrypted_cvc = 4;
+}
+
+message AddBankCardDetailResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message GetDataRequest {
+  string query = 1;
+}
+
+message GetDataResponse {
+  repeated DataItem data = 1;
+}
+
+message DataItem {
+  string type = 1; // e.g., "LoginPasswordPair", "TextData", etc.
+  string description = 2;
+  string content = 3; // Encrypted data, could also be Base64 encoded if binary
+}
