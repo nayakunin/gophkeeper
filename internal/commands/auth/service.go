@@ -1,8 +1,8 @@
 package auth
 
 type LocalStorage interface {
-	SaveCredentials(token, encryptionKey string) error
-	GetCredentials() (string, string, error)
+	SaveCredentials(token string, encryptionKey []byte) error
+	GetCredentials() (string, []byte, error)
 	DeleteCredentials() error
 }
 

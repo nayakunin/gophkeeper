@@ -61,7 +61,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 			}
 			results := make([]Result, len(response.GetLoginPasswordPairs()))
 			for i, pair := range response.GetLoginPasswordPairs() {
-				password, err := encryption.Decrypt(pair.GetEncryptedPassword(), []byte(encryptionKey))
+				password, err := encryption.Decrypt(pair.GetEncryptedPassword(), encryptionKey)
 				if err != nil {
 					return fmt.Errorf("could not decrypt password: %w", err)
 				}

@@ -5,7 +5,7 @@ import (
 )
 
 type CredentialsService interface {
-	GetCredentials() (string, string, error)
+	GetCredentials() (string, []byte, error)
 }
 
 type Service struct {

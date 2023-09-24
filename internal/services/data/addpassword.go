@@ -19,7 +19,7 @@ func (s *Service) AddLoginPasswordPair(ctx context.Context, in *api.AddLoginPass
 
 	encryptedPassword, err := encryption.Encrypt(in.GetEncryptedPassword(), []byte(constants.EncryptionKey))
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to hash password: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to encrypt password: %v", err)
 	}
 
 	err = s.Storage.AddLoginPasswordPair(userID, in.GetServiceName(), in.GetLogin(), encryptedPassword, in.GetDescription())

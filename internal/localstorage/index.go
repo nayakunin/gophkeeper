@@ -5,8 +5,8 @@ import (
 )
 
 type CredentialsService interface {
-	Set(key, value string) error
-	Get(key string) (string, error)
+	Set(key string, value []byte) error
+	Get(key string) ([]byte, error)
 	Delete(key string) error
 }
 
@@ -20,8 +20,8 @@ func NewStorage(credentialsService CredentialsService) *Storage {
 	}
 }
 
-func (s *Storage) SaveCredentials(token, encryptionKey string) error {
-	if err := s.credentialsService.Set("token", token); err != nil {
+func (s *Storage) SaveCredentials(token string, encryptionKey []byte) error {
+	if err := s.credentialsService.Set("token", []byte(token)); err != nil {
 		return fmt.Errorf("unable to save token: %w", err)
 	}
 
@@ -32,18 +32,18 @@ func (s *Storage) SaveCredentials(token, encryptionKey string) error {
 	return nil
 }
 
-func (s *Storage) GetCredentials() (token, encryptionKey string, err error) {
-	token, err = s.credentialsService.Get("token")
+func (s *Storage) GetCredentials() (token string, encryptionKey []byte, err error) {
+	tokenBytes, err := s.credentialsService.Get("token")
 	if err != nil {
-		return "", "", fmt.Errorf("unable to get token: %w", err)
+		return "", nil, fmt.Errorf("unable to get token: %w", err)
 	}
 
 	encryptionKey, err = s.credentialsService.Get("encryptionKey")
 	if err != nil {
-		return "", "", fmt.Errorf("unable to get encryption key: %w", err)
+		return "", nil, fmt.Errorf("unable to get encryption key: %w", err)
 	}
 
-	return token, encryptionKey, nil
+	return string(tokenBytes), encryptionKey, nil
 }
 
 func (s *Storage) DeleteCredentials() error {

@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -29,7 +28,6 @@ func (s *Service) RegisterCmd() *cobra.Command {
 			client := api.NewRegistrationServiceClient(conn)
 
 			encryptionKey, err := encryption.GenerateKey()
-			fmt.Println("encryptionKey: ", hex.EncodeToString(encryptionKey))
 
 			if err != nil {
 				return fmt.Errorf("could not generate encryption key: %w", err)
@@ -43,7 +41,7 @@ func (s *Service) RegisterCmd() *cobra.Command {
 				return fmt.Errorf("could not register user: %w", err)
 			}
 
-			if err := s.storage.SaveCredentials(response.GetToken(), hex.EncodeToString(encryptionKey)); err != nil {
+			if err := s.storage.SaveCredentials(response.GetToken(), encryptionKey); err != nil {
 				return fmt.Errorf("could not save credentials: %w", err)
 			}
 

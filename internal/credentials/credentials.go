@@ -24,20 +24,20 @@ func NewService() *Service {
 	}
 }
 
-func (s *Service) Set(key, value string) error {
+func (s *Service) Set(key string, value []byte) error {
 	return s.ring.Set(keyring.Item{
 		Key:  key,
-		Data: []byte(value),
+		Data: value,
 	})
 }
 
-func (s *Service) Get(key string) (string, error) {
+func (s *Service) Get(key string) ([]byte, error) {
 	item, err := s.ring.Get(key)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(item.Data), nil
+	return item.Data, nil
 }
 
 func (s *Service) Delete(key string) error {

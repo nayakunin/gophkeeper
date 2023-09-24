@@ -91,11 +91,6 @@ func Decrypt(text string, key []byte) (string, error) {
 		return "", fmt.Errorf("unable to open cipher: %w", err)
 	}
 
-	// Ensure it's valid UTF-8 before converting to string.
-	if !utf8.Valid(plaintext) {
-		return "", fmt.Errorf("decrypted text is not valid UTF-8")
-	}
-
 	return string(plaintext), nil
 }
 

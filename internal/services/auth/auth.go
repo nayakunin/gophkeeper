@@ -32,6 +32,6 @@ func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUser
 
 	return &api.AuthenticateUserResponse{
 		Token:         jwtToken,
-		EncryptionKey: decodedEncryptionKey,
+		EncryptionKey: []byte(decodedEncryptionKey),
 	}, nil
 }

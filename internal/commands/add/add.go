@@ -3,7 +3,7 @@ package add
 import "github.com/spf13/cobra"
 
 type CredentialsService interface {
-	GetCredentials() (string, string, error)
+	GetCredentials() (string, []byte, error)
 }
 
 type Service struct {

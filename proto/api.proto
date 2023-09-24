@@ -33,7 +33,7 @@ message Empty {}
 message RegisterUserRequest {
   string username = 1;
   string password = 2;
-  string encryption_key = 3;
+  bytes encryption_key = 3;
 }
 
 message RegisterUserResponse {
@@ -48,7 +48,7 @@ message AuthenticateUserRequest {
 
 message AuthenticateUserResponse {
   string token = 1;
-  string encryption_key = 3;
+  bytes encryption_key = 2;
 }
 
 // Data-related requests and responses
