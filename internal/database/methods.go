@@ -2,24 +2,26 @@ package database
 
 import (
 	"context"
+	"fmt"
 )
 
-func (s Storage) CreateUser(username, passwordHash, encryptedMasterKey string) error {
+func (s Storage) CreateUser(username, passwordHash, encryptedMasterKey string) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 
 	conn, err := s.Pool.Acquire(ctx)
 	if err != nil {
-		return err
+		return 0, fmt.Errorf("could not acquire connection: %w", err)
 	}
 	defer conn.Release()
 
-	_, err = conn.Exec(ctx, `INSERT INTO users (username, password_hash, encrypted_master_key) VALUES ($1, $2, $3)`, username, passwordHash, encryptedMasterKey)
+	var userID int64
+	err = conn.QueryRow(ctx, `INSERT INTO users (username, password_hash, encrypted_master_key) VALUES ($1, $2, $3) RETURNING id`, username, passwordHash, encryptedMasterKey).Scan(&userID)
 	if err != nil {
-		return err
+		return 0, fmt.Errorf("could not insert user: %w", err)
 	}
 
-	return nil
+	return userID, nil
 }
 
 func (s Storage) GetUser(username string) (*User, error) {

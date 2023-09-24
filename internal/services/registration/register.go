@@ -10,21 +10,28 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
-func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.Empty, error) {
+func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.RegisterUserResponse, error) {
 	passwordHash, err := auth.HashPassword(in.Password)
 	if err != nil {
 		return nil, fmt.Errorf("unable to hash password: %w", err)
 	}
 
-	encryptionKey := encryption.GenerateKey()
-	encryptedMasterKey, err := encryption.Encrypt(string(encryptionKey), []byte(constants.EncryptionKey))
+	encryptedMasterKey, err := encryption.Encrypt(in.GetEncryptionKey(), []byte(constants.EncryptionKey))
 	if err != nil {
 		return nil, fmt.Errorf("unable to encrypt master key: %w", err)
 	}
 
-	if err := s.Storage.CreateUser(in.Username, passwordHash, encryptedMasterKey); err != nil {
+	userID, err := s.Storage.CreateUser(in.Username, passwordHash, encryptedMasterKey)
+	if err != nil {
 		return nil, fmt.Errorf("unable to create user: %w", err)
 	}
 
-	return &api.Empty{}, nil
+	jwtToken, err := auth.GenerateJWT(userID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to generate jwt: %w", err)
+	}
+
+	return &api.RegisterUserResponse{
+		Token: jwtToken,
+	}, nil
 }

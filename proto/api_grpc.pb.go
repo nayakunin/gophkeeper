@@ -108,7 +108,7 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RegistrationServiceClient interface {
-	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*Empty, error)
+	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 }
 
 type registrationServiceClient struct {
@@ -119,8 +119,8 @@ func NewRegistrationServiceClient(cc grpc.ClientConnInterface) RegistrationServi
 	return &registrationServiceClient{cc}
 }
 
-func (c *registrationServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *registrationServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error) {
+	out := new(RegisterUserResponse)
 	err := c.cc.Invoke(ctx, "/gophkeeper.RegistrationService/RegisterUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (c *registrationServiceClient) RegisterUser(ctx context.Context, in *Regist
 // All implementations must embed UnimplementedRegistrationServiceServer
 // for forward compatibility
 type RegistrationServiceServer interface {
-	RegisterUser(context.Context, *RegisterUserRequest) (*Empty, error)
+	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	mustEmbedUnimplementedRegistrationServiceServer()
 }
 
@@ -140,7 +140,7 @@ type RegistrationServiceServer interface {
 type UnimplementedRegistrationServiceServer struct {
 }
 
-func (UnimplementedRegistrationServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*Empty, error) {
+func (UnimplementedRegistrationServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
 }
 func (UnimplementedRegistrationServiceServer) mustEmbedUnimplementedRegistrationServiceServer() {}

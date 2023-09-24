@@ -11,7 +11,7 @@ service AuthService {
 
 // The registration service definition
 service RegistrationService {
-  rpc RegisterUser (RegisterUserRequest) returns (Empty);
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
 }
 
 // The data service definition
@@ -33,6 +33,11 @@ message Empty {}
 message RegisterUserRequest {
   string username = 1;
   string password = 2;
+  string encryption_key = 3;
+}
+
+message RegisterUserResponse {
+  string token = 1;
 }
 
 // Auth-related requests and responses
