@@ -3,9 +3,9 @@ package commands
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/nayakunin/gophkeeper/constants"
+	"github.com/nayakunin/gophkeeper/internal/credentials"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -14,13 +14,13 @@ import (
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Log in as a user",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 
 		conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
 		if err != nil {
-			log.Fatalf("Could not connect: %v", err)
+			return fmt.Errorf("could not connect: %w", err)
 		}
 		defer conn.Close()
 
@@ -31,10 +31,15 @@ var loginCmd = &cobra.Command{
 			Password: password,
 		})
 		if err != nil {
-			log.Fatalf("Could not authenticate user: %v", err)
+			return fmt.Errorf("could not authenticate user: %w", err)
 		}
 
-		fmt.Printf("Authentication result: %s\n", response.String())
+		if err := credentials.Store.Set("token", response.GetToken()); err != nil {
+			return fmt.Errorf("could not set token: %w", err)
+		}
+
+		fmt.Println("Successfully logged in")
+		return nil
 	},
 }
 

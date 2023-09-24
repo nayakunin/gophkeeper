@@ -4,14 +4,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var GetCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get an entry",
 }
 
 func init() {
-	GetCmd.AddCommand(PasswordCmd)
-	GetCmd.AddCommand(CardCmd)
-	GetCmd.AddCommand(BinaryCmd)
-	GetCmd.AddCommand(NoteCmd)
+	Cmd.AddCommand(PasswordCmd)
+	Cmd.AddCommand(CardCmd)
+	Cmd.AddCommand(BinaryCmd)
+	Cmd.AddCommand(NoteCmd)
 }

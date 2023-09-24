@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/nayakunin/gophkeeper/constants"
 	api "github.com/nayakunin/gophkeeper/proto"
@@ -14,13 +13,13 @@ import (
 var registerCmd = &cobra.Command{
 	Use:   "register",
 	Short: "Register a new user",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 
 		conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
 		if err != nil {
-			log.Fatalf("Could not connect: %v", err)
+			return fmt.Errorf("could not connect: %w", err)
 		}
 		defer conn.Close()
 
@@ -31,10 +30,11 @@ var registerCmd = &cobra.Command{
 			Password: password,
 		})
 		if err != nil {
-			log.Fatalf("Could not register user: %v", err)
+			return fmt.Errorf("could not register user: %w", err)
 		}
 
 		fmt.Printf("Registration result: %s\n", response.GetMessage())
+		return nil
 	},
 }
 

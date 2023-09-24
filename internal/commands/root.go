@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/nayakunin/gophkeeper/internal/commands/get"
@@ -17,7 +18,14 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
 func init() {
-	rootCmd.AddCommand(add.AddCmd)
-	rootCmd.AddCommand(get.GetCmd)
+	rootCmd.AddCommand(add.Cmd)
+	rootCmd.AddCommand(get.Cmd)
 }
