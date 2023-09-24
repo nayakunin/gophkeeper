@@ -14,14 +14,14 @@ type User struct {
 
 // LoginPasswordPair represents a login/password pair stored by a user
 type LoginPasswordPair struct {
-	ID           int       `json:"id"`
-	UserID       int       `json:"user_id"`
-	ServiceName  string    `json:"service_name"`
-	Login        string    `json:"login"`
-	Description  string    `json:"description"`
-	PasswordHash string    `json:"-"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID                int       `json:"id"`
+	UserID            int       `json:"user_id"`
+	ServiceName       string    `json:"service_name"`
+	Login             string    `json:"login"`
+	Description       string    `json:"description"`
+	EncryptedPassword string    `json:"encrypted_password"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }
 
 // TextData represents arbitrary textual data stored by a user

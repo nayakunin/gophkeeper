@@ -1,6 +1,9 @@
 package credentials
 
-import "github.com/99designs/keyring"
+import (
+	"github.com/99designs/keyring"
+	"google.golang.org/grpc/metadata"
+)
 
 type store struct {
 	ring keyring.Keyring
@@ -8,7 +11,10 @@ type store struct {
 
 func newStore() *store {
 	ring, err := keyring.Open(keyring.Config{
-		ServiceName: "gophkeeper",
+		ServiceName:                    "gophkeeper",
+		KeychainName:                   "gophkeeper",
+		KeychainTrustApplication:       true,
+		KeychainAccessibleWhenUnlocked: true,
 	})
 	if err != nil {
 		panic(err)
@@ -37,6 +43,10 @@ func (s *store) Get(key string) (string, error) {
 
 func (s *store) Delete(key string) error {
 	return s.ring.Remove(key)
+}
+
+func GetRequestMetadata(token string) metadata.MD {
+	return metadata.Pairs("authorization", "Bearer "+token)
 }
 
 var Store = newStore()

@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/nayakunin/gophkeeper/pkg/utils/auth"
 	api "github.com/nayakunin/gophkeeper/proto"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.RegisterUserResponse, error) {
-	passwordHash, err := HashPassword(in.Password)
+	passwordHash, err := auth.HashPassword(in.Password)
 	if err != nil {
 		return &api.RegisterUserResponse{
 			Message: "Unable to hash password",
@@ -28,13 +28,4 @@ func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest)
 		Message: "User created",
 		Success: true,
 	}, nil
-}
-
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	if err != nil {
-		return "", err
-	}
-
-	return string(bytes), nil
 }

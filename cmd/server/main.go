@@ -70,7 +70,7 @@ func main() {
 
 	api.RegisterRegistrationServiceServer(s, registrationService.NewService(storage))
 	api.RegisterAuthServiceServer(s, authService.NewService(storage))
-	api.RegisterDataServiceServer(s, dataService.NewService())
+	api.RegisterDataServiceServer(s, dataService.NewService(storage))
 
 	//level.Info(logger).Log("msg", "starting gRPC server", "addr", grpcAddr)
 	fmt.Println("starting gRPC server", "addr", grpcAddr)

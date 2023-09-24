@@ -39,7 +39,7 @@ func initDB(conn *pgxpool.Conn) error {
 		user_id INT REFERENCES users(id),
 		service_name VARCHAR(50),
 		login VARCHAR(50),
-		password_hash VARCHAR(256),
+		encrypted_password VARCHAR(256),
 		description TEXT,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
