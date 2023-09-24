@@ -11,7 +11,7 @@ service AuthService {
 
 // The registration service definition
 service RegistrationService {
-  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+  rpc RegisterUser (RegisterUserRequest) returns (Empty);
 }
 
 // The data service definition
@@ -21,20 +21,18 @@ service DataService {
   rpc AddBinaryData (AddBinaryDataRequest) returns (AddBinaryDataResponse);
   rpc AddBankCardDetail (AddBankCardDetailRequest) returns (AddBankCardDetailResponse);
   rpc GetLoginPasswordPairs (GetLoginPasswordPairsRequest) returns (GetLoginPasswordPairsResponse);
-  rpc GetTextData (GetTextDataRequest) returns (GetTextDataResponse);
-  rpc GetBinaryData (GetBinaryDataRequest) returns (GetBinaryDataResponse);
+  rpc GetTextData (Empty) returns (GetTextDataResponse);
+  rpc GetBinaryData (Empty) returns (GetBinaryDataResponse);
   rpc GetBankCardDetails (GetBankCardDetailsRequest) returns (GetBankCardDetailsResponse);
 }
+
+// Common request and response messages
+message Empty {}
 
 // Registration-related requests and responses
 message RegisterUserRequest {
   string username = 1;
   string password = 2;
-}
-
-message RegisterUserResponse {
-  string message = 1;
-  bool success = 2;
 }
 
 // Auth-related requests and responses
@@ -45,14 +43,14 @@ message AuthenticateUserRequest {
 
 message AuthenticateUserResponse {
   string token = 1;
-  bool success = 2;
+  string encryption_key = 3;
 }
 
 // Data-related requests and responses
 message AddLoginPasswordPairRequest {
   string service_name = 1;
   string login = 2;
-  string password = 3;
+  string encrypted_password = 3;
   string description = 4;
 }
 
@@ -101,7 +99,7 @@ message GetLoginPasswordPairsRequest {
 message LoginPasswordPair {
   int64 id = 1;
   string login = 2;
-  string password = 3;
+  string encrypted_password = 3;
   string description = 4;
   string service_name = 5;
 }
@@ -110,19 +108,15 @@ message GetLoginPasswordPairsResponse {
   repeated LoginPasswordPair login_password_pairs = 1;
 }
 
-message GetTextDataRequest {}
-
 message GetTextDataResponse {
   int64 id = 1;
-  string text = 2;
+  string encrypted_text = 2;
   string description = 3;
 }
 
-message GetBinaryDataRequest {}
-
 message GetBinaryDataResponse {
   int64 id = 1;
-  bytes data = 2;
+  bytes encrypted_data = 2;
   string description = 3;
 }
 
@@ -132,10 +126,10 @@ message GetBankCardDetailsRequest {
 
 message BankCardDetail {
   int64 id = 1;
-  string card_name = 2;
-  string card_number = 3;
-  string expiry_date = 4;
-  string cvc = 5;
+  string encrypted_card_name = 2;
+  string encrypted_card_number = 3;
+  string encrypted_expiry_date = 4;
+  string encrypted_cvc = 5;
   string description = 6;
 }
 

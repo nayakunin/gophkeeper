@@ -108,7 +108,7 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RegistrationServiceClient interface {
-	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
+	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type registrationServiceClient struct {
@@ -119,8 +119,8 @@ func NewRegistrationServiceClient(cc grpc.ClientConnInterface) RegistrationServi
 	return &registrationServiceClient{cc}
 }
 
-func (c *registrationServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error) {
-	out := new(RegisterUserResponse)
+func (c *registrationServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/gophkeeper.RegistrationService/RegisterUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (c *registrationServiceClient) RegisterUser(ctx context.Context, in *Regist
 // All implementations must embed UnimplementedRegistrationServiceServer
 // for forward compatibility
 type RegistrationServiceServer interface {
-	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
+	RegisterUser(context.Context, *RegisterUserRequest) (*Empty, error)
 	mustEmbedUnimplementedRegistrationServiceServer()
 }
 
@@ -140,7 +140,7 @@ type RegistrationServiceServer interface {
 type UnimplementedRegistrationServiceServer struct {
 }
 
-func (UnimplementedRegistrationServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error) {
+func (UnimplementedRegistrationServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
 }
 func (UnimplementedRegistrationServiceServer) mustEmbedUnimplementedRegistrationServiceServer() {}
@@ -199,8 +199,8 @@ type DataServiceClient interface {
 	AddBinaryData(ctx context.Context, in *AddBinaryDataRequest, opts ...grpc.CallOption) (*AddBinaryDataResponse, error)
 	AddBankCardDetail(ctx context.Context, in *AddBankCardDetailRequest, opts ...grpc.CallOption) (*AddBankCardDetailResponse, error)
 	GetLoginPasswordPairs(ctx context.Context, in *GetLoginPasswordPairsRequest, opts ...grpc.CallOption) (*GetLoginPasswordPairsResponse, error)
-	GetTextData(ctx context.Context, in *GetTextDataRequest, opts ...grpc.CallOption) (*GetTextDataResponse, error)
-	GetBinaryData(ctx context.Context, in *GetBinaryDataRequest, opts ...grpc.CallOption) (*GetBinaryDataResponse, error)
+	GetTextData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetTextDataResponse, error)
+	GetBinaryData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBinaryDataResponse, error)
 	GetBankCardDetails(ctx context.Context, in *GetBankCardDetailsRequest, opts ...grpc.CallOption) (*GetBankCardDetailsResponse, error)
 }
 
@@ -257,7 +257,7 @@ func (c *dataServiceClient) GetLoginPasswordPairs(ctx context.Context, in *GetLo
 	return out, nil
 }
 
-func (c *dataServiceClient) GetTextData(ctx context.Context, in *GetTextDataRequest, opts ...grpc.CallOption) (*GetTextDataResponse, error) {
+func (c *dataServiceClient) GetTextData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetTextDataResponse, error) {
 	out := new(GetTextDataResponse)
 	err := c.cc.Invoke(ctx, "/gophkeeper.DataService/GetTextData", in, out, opts...)
 	if err != nil {
@@ -266,7 +266,7 @@ func (c *dataServiceClient) GetTextData(ctx context.Context, in *GetTextDataRequ
 	return out, nil
 }
 
-func (c *dataServiceClient) GetBinaryData(ctx context.Context, in *GetBinaryDataRequest, opts ...grpc.CallOption) (*GetBinaryDataResponse, error) {
+func (c *dataServiceClient) GetBinaryData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBinaryDataResponse, error) {
 	out := new(GetBinaryDataResponse)
 	err := c.cc.Invoke(ctx, "/gophkeeper.DataService/GetBinaryData", in, out, opts...)
 	if err != nil {
@@ -293,8 +293,8 @@ type DataServiceServer interface {
 	AddBinaryData(context.Context, *AddBinaryDataRequest) (*AddBinaryDataResponse, error)
 	AddBankCardDetail(context.Context, *AddBankCardDetailRequest) (*AddBankCardDetailResponse, error)
 	GetLoginPasswordPairs(context.Context, *GetLoginPasswordPairsRequest) (*GetLoginPasswordPairsResponse, error)
-	GetTextData(context.Context, *GetTextDataRequest) (*GetTextDataResponse, error)
-	GetBinaryData(context.Context, *GetBinaryDataRequest) (*GetBinaryDataResponse, error)
+	GetTextData(context.Context, *Empty) (*GetTextDataResponse, error)
+	GetBinaryData(context.Context, *Empty) (*GetBinaryDataResponse, error)
 	GetBankCardDetails(context.Context, *GetBankCardDetailsRequest) (*GetBankCardDetailsResponse, error)
 	mustEmbedUnimplementedDataServiceServer()
 }
@@ -318,10 +318,10 @@ func (UnimplementedDataServiceServer) AddBankCardDetail(context.Context, *AddBan
 func (UnimplementedDataServiceServer) GetLoginPasswordPairs(context.Context, *GetLoginPasswordPairsRequest) (*GetLoginPasswordPairsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLoginPasswordPairs not implemented")
 }
-func (UnimplementedDataServiceServer) GetTextData(context.Context, *GetTextDataRequest) (*GetTextDataResponse, error) {
+func (UnimplementedDataServiceServer) GetTextData(context.Context, *Empty) (*GetTextDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTextData not implemented")
 }
-func (UnimplementedDataServiceServer) GetBinaryData(context.Context, *GetBinaryDataRequest) (*GetBinaryDataResponse, error) {
+func (UnimplementedDataServiceServer) GetBinaryData(context.Context, *Empty) (*GetBinaryDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBinaryData not implemented")
 }
 func (UnimplementedDataServiceServer) GetBankCardDetails(context.Context, *GetBankCardDetailsRequest) (*GetBankCardDetailsResponse, error) {
@@ -431,7 +431,7 @@ func _DataService_GetLoginPasswordPairs_Handler(srv interface{}, ctx context.Con
 }
 
 func _DataService_GetTextData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTextDataRequest)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -443,13 +443,13 @@ func _DataService_GetTextData_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/gophkeeper.DataService/GetTextData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DataServiceServer).GetTextData(ctx, req.(*GetTextDataRequest))
+		return srv.(DataServiceServer).GetTextData(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _DataService_GetBinaryData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBinaryDataRequest)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -461,7 +461,7 @@ func _DataService_GetBinaryData_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/gophkeeper.DataService/GetBinaryData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DataServiceServer).GetBinaryData(ctx, req.(*GetBinaryDataRequest))
+		return srv.(DataServiceServer).GetBinaryData(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

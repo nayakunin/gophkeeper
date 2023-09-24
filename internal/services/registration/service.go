@@ -5,7 +5,7 @@ import (
 )
 
 type Storage interface {
-	CreateUser(username, passwordHash string) error
+	CreateUser(username, passwordHash, encryptedMasterKey string) error
 }
 
 // Service is a struct of the grpc.

@@ -28,6 +28,7 @@ func initDB(conn *pgxpool.Conn) error {
 		id SERIAL PRIMARY KEY,
 		username VARCHAR(50) UNIQUE NOT NULL,
 		password_hash VARCHAR(256) NOT NULL,
+    	encrypted_master_key VARCHAR(256) NOT NULL,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
 	)`); err != nil {

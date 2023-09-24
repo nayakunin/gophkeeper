@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-func (s Storage) CreateUser(username, passwordHash string) error {
+func (s Storage) CreateUser(username, passwordHash, encryptedMasterKey string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 
@@ -14,7 +14,7 @@ func (s Storage) CreateUser(username, passwordHash string) error {
 	}
 	defer conn.Release()
 
-	_, err = conn.Exec(ctx, `INSERT INTO users (username, password_hash) VALUES ($1, $2)`, username, passwordHash)
+	_, err = conn.Exec(ctx, `INSERT INTO users (username, password_hash, encrypted_master_key) VALUES ($1, $2, $3)`, username, passwordHash, encryptedMasterKey)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (s Storage) GetUser(username string) (*User, error) {
 	defer conn.Release()
 
 	var user User
-	if err = conn.QueryRow(ctx, `SELECT id, username, password_hash FROM users WHERE username = $1`, username).Scan(&user.ID, &user.Username, &user.PasswordHash); err != nil {
+	if err = conn.QueryRow(ctx, `SELECT id, username, password_hash, encrypted_master_key FROM users WHERE username = $1`, username).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.EncryptedMasterKey); err != nil {
 		return nil, err
 	}
 

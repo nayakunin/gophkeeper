@@ -2,14 +2,13 @@ package credentials
 
 import (
 	"github.com/99designs/keyring"
-	"google.golang.org/grpc/metadata"
 )
 
-type store struct {
+type Service struct {
 	ring keyring.Keyring
 }
 
-func newStore() *store {
+func NewService() *Service {
 	ring, err := keyring.Open(keyring.Config{
 		ServiceName:                    "gophkeeper",
 		KeychainName:                   "gophkeeper",
@@ -20,19 +19,19 @@ func newStore() *store {
 		panic(err)
 	}
 
-	return &store{
+	return &Service{
 		ring: ring,
 	}
 }
 
-func (s *store) Set(key, value string) error {
+func (s *Service) Set(key, value string) error {
 	return s.ring.Set(keyring.Item{
 		Key:  key,
 		Data: []byte(value),
 	})
 }
 
-func (s *store) Get(key string) (string, error) {
+func (s *Service) Get(key string) (string, error) {
 	item, err := s.ring.Get(key)
 	if err != nil {
 		return "", err
@@ -41,12 +40,6 @@ func (s *store) Get(key string) (string, error) {
 	return string(item.Data), nil
 }
 
-func (s *store) Delete(key string) error {
+func (s *Service) Delete(key string) error {
 	return s.ring.Remove(key)
 }
-
-func GetRequestMetadata(token string) metadata.MD {
-	return metadata.Pairs("authorization", "Bearer "+token)
-}
-
-var Store = newStore()

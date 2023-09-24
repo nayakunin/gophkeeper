@@ -2,14 +2,30 @@ package add
 
 import "github.com/spf13/cobra"
 
-var Cmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add a new entry",
+type CredentialsService interface {
+	GetCredentials() (string, string, error)
 }
 
-func init() {
-	Cmd.AddCommand(PasswordCmd)
-	Cmd.AddCommand(CardCmd)
-	Cmd.AddCommand(BinaryCmd)
-	Cmd.AddCommand(NoteCmd)
+type Service struct {
+	credentialsService CredentialsService
+}
+
+func NewService(credentialsService CredentialsService) *Service {
+	return &Service{
+		credentialsService: credentialsService,
+	}
+}
+
+func (s *Service) Handle() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add",
+		Short: "Add a new entry",
+	}
+
+	cmd.AddCommand(s.passwordCmd())
+	cmd.AddCommand(s.binaryCmd())
+	cmd.AddCommand(s.textCmd())
+	cmd.AddCommand(s.cardCmd())
+
+	return cmd
 }

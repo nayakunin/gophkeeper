@@ -4,12 +4,13 @@ import "time"
 
 // User represents a user in the system
 type User struct {
-	ID           int       `json:"id"`
-	Username     string    `json:"username"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"-"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID                 int       `json:"id"`
+	Username           string    `json:"username"`
+	Email              string    `json:"email"`
+	PasswordHash       string    `json:"-"`
+	EncryptedMasterKey string    `json:"-"`
+	CreatedAt          time.Time `json:"created_at"`
+	UpdatedAt          time.Time `json:"updated_at"`
 }
 
 // LoginPasswordPair represents a login/password pair stored by a user

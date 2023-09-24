@@ -5,27 +5,55 @@ import (
 	"os"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add"
+	"github.com/nayakunin/gophkeeper/internal/commands/auth"
 	"github.com/nayakunin/gophkeeper/internal/commands/get"
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "gophkeeper",
-	Short: "Gophkeeper is a tool for managing your gophers",
-	Long:  `Gophkeeper is a tool for managing your gophers.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello, world!")
-	},
+type CredentialsService interface {
+	SaveCredentials(token, encryptionKey string) error
+	GetCredentials() (string, string, error)
+	DeleteCredentials() error
 }
 
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+type Root struct {
+	cmd                *cobra.Command
+	credentialsService CredentialsService
+}
+
+func NewRoot(credentialsService CredentialsService) Root {
+	addService := add.NewService(credentialsService)
+	authService := auth.NewService(credentialsService)
+	getService := get.NewService(credentialsService)
+
+	rootCmd := &cobra.Command{
+		Use:   "gophkeeper",
+		Short: "Gophkeeper is a tool for managing your gophers",
+		Long:  `Gophkeeper is a tool for managing your gophers.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Hello, world!")
+		},
+	}
+
+	// Root level commands
+	rootCmd.AddCommand(authService.RegisterCmd())
+	rootCmd.AddCommand(authService.LoginCmd())
+	rootCmd.AddCommand(authService.LogoutCmd())
+
+	// Add subcommands
+	rootCmd.AddCommand(addService.Handle())
+
+	// Get subcommands
+	rootCmd.AddCommand(getService.Handle())
+
+	return Root{
+		cmd: rootCmd,
 	}
 }
 
-func init() {
-	rootCmd.AddCommand(add.Cmd)
-	rootCmd.AddCommand(get.Cmd)
+func (r Root) Execute() {
+	if err := r.cmd.Execute(); err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

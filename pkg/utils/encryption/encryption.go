@@ -8,6 +8,16 @@ import (
 	"io"
 )
 
+// GenerateKey generates a new AES-256 key
+func GenerateKey() []byte {
+	key := make([]byte, 32) // AES-256
+	_, err := rand.Read(key)
+	if err != nil {
+		panic(err)
+	}
+	return key
+}
+
 // Encrypt string to base64 crypto using AES GCM
 func Encrypt(text string, key []byte) (string, error) {
 	block, err := aes.NewCipher(key)
