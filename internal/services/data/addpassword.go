@@ -11,13 +11,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Service) AddLoginPasswordPair(ctx context.Context, in *api.AddLoginPasswordPairRequest) (*api.AddLoginPasswordPairResponse, error) {
+func (s *Service) AddLoginPasswordPair(ctx context.Context, in *api.AddLoginPasswordPairRequest) (*api.Empty, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {
 		return nil, status.Errorf(codes.Internal, "userID not found in context")
 	}
 
-	encryptedPassword, err := encryption.Encrypt(in.GetPassword(), []byte(constants.EncryptionKey))
+	encryptedPassword, err := encryption.Encrypt(in.GetEncryptedPassword(), []byte(constants.EncryptionKey))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password: %v", err)
 	}
@@ -27,7 +27,5 @@ func (s *Service) AddLoginPasswordPair(ctx context.Context, in *api.AddLoginPass
 		return nil, status.Errorf(codes.Internal, "failed to add login password pair: %v", err)
 	}
 
-	return &api.AddLoginPasswordPairResponse{
-		Success: true,
-	}, nil
+	return &api.Empty{}, nil
 }

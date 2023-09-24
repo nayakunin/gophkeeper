@@ -194,10 +194,10 @@ var RegistrationService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DataServiceClient interface {
-	AddLoginPasswordPair(ctx context.Context, in *AddLoginPasswordPairRequest, opts ...grpc.CallOption) (*AddLoginPasswordPairResponse, error)
-	AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*AddTextDataResponse, error)
-	AddBinaryData(ctx context.Context, in *AddBinaryDataRequest, opts ...grpc.CallOption) (*AddBinaryDataResponse, error)
-	AddBankCardDetail(ctx context.Context, in *AddBankCardDetailRequest, opts ...grpc.CallOption) (*AddBankCardDetailResponse, error)
+	AddLoginPasswordPair(ctx context.Context, in *AddLoginPasswordPairRequest, opts ...grpc.CallOption) (*Empty, error)
+	AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*Empty, error)
+	AddBinaryData(ctx context.Context, in *AddBinaryDataRequest, opts ...grpc.CallOption) (*Empty, error)
+	AddBankCardDetail(ctx context.Context, in *AddBankCardDetailRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetLoginPasswordPairs(ctx context.Context, in *GetLoginPasswordPairsRequest, opts ...grpc.CallOption) (*GetLoginPasswordPairsResponse, error)
 	GetTextData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetTextDataResponse, error)
 	GetBinaryData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBinaryDataResponse, error)
@@ -212,8 +212,8 @@ func NewDataServiceClient(cc grpc.ClientConnInterface) DataServiceClient {
 	return &dataServiceClient{cc}
 }
 
-func (c *dataServiceClient) AddLoginPasswordPair(ctx context.Context, in *AddLoginPasswordPairRequest, opts ...grpc.CallOption) (*AddLoginPasswordPairResponse, error) {
-	out := new(AddLoginPasswordPairResponse)
+func (c *dataServiceClient) AddLoginPasswordPair(ctx context.Context, in *AddLoginPasswordPairRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/gophkeeper.DataService/AddLoginPasswordPair", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -221,8 +221,8 @@ func (c *dataServiceClient) AddLoginPasswordPair(ctx context.Context, in *AddLog
 	return out, nil
 }
 
-func (c *dataServiceClient) AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*AddTextDataResponse, error) {
-	out := new(AddTextDataResponse)
+func (c *dataServiceClient) AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/gophkeeper.DataService/AddTextData", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -230,8 +230,8 @@ func (c *dataServiceClient) AddTextData(ctx context.Context, in *AddTextDataRequ
 	return out, nil
 }
 
-func (c *dataServiceClient) AddBinaryData(ctx context.Context, in *AddBinaryDataRequest, opts ...grpc.CallOption) (*AddBinaryDataResponse, error) {
-	out := new(AddBinaryDataResponse)
+func (c *dataServiceClient) AddBinaryData(ctx context.Context, in *AddBinaryDataRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/gophkeeper.DataService/AddBinaryData", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -239,8 +239,8 @@ func (c *dataServiceClient) AddBinaryData(ctx context.Context, in *AddBinaryData
 	return out, nil
 }
 
-func (c *dataServiceClient) AddBankCardDetail(ctx context.Context, in *AddBankCardDetailRequest, opts ...grpc.CallOption) (*AddBankCardDetailResponse, error) {
-	out := new(AddBankCardDetailResponse)
+func (c *dataServiceClient) AddBankCardDetail(ctx context.Context, in *AddBankCardDetailRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/gophkeeper.DataService/AddBankCardDetail", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -288,10 +288,10 @@ func (c *dataServiceClient) GetBankCardDetails(ctx context.Context, in *GetBankC
 // All implementations must embed UnimplementedDataServiceServer
 // for forward compatibility
 type DataServiceServer interface {
-	AddLoginPasswordPair(context.Context, *AddLoginPasswordPairRequest) (*AddLoginPasswordPairResponse, error)
-	AddTextData(context.Context, *AddTextDataRequest) (*AddTextDataResponse, error)
-	AddBinaryData(context.Context, *AddBinaryDataRequest) (*AddBinaryDataResponse, error)
-	AddBankCardDetail(context.Context, *AddBankCardDetailRequest) (*AddBankCardDetailResponse, error)
+	AddLoginPasswordPair(context.Context, *AddLoginPasswordPairRequest) (*Empty, error)
+	AddTextData(context.Context, *AddTextDataRequest) (*Empty, error)
+	AddBinaryData(context.Context, *AddBinaryDataRequest) (*Empty, error)
+	AddBankCardDetail(context.Context, *AddBankCardDetailRequest) (*Empty, error)
 	GetLoginPasswordPairs(context.Context, *GetLoginPasswordPairsRequest) (*GetLoginPasswordPairsResponse, error)
 	GetTextData(context.Context, *Empty) (*GetTextDataResponse, error)
 	GetBinaryData(context.Context, *Empty) (*GetBinaryDataResponse, error)
@@ -303,16 +303,16 @@ type DataServiceServer interface {
 type UnimplementedDataServiceServer struct {
 }
 
-func (UnimplementedDataServiceServer) AddLoginPasswordPair(context.Context, *AddLoginPasswordPairRequest) (*AddLoginPasswordPairResponse, error) {
+func (UnimplementedDataServiceServer) AddLoginPasswordPair(context.Context, *AddLoginPasswordPairRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddLoginPasswordPair not implemented")
 }
-func (UnimplementedDataServiceServer) AddTextData(context.Context, *AddTextDataRequest) (*AddTextDataResponse, error) {
+func (UnimplementedDataServiceServer) AddTextData(context.Context, *AddTextDataRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTextData not implemented")
 }
-func (UnimplementedDataServiceServer) AddBinaryData(context.Context, *AddBinaryDataRequest) (*AddBinaryDataResponse, error) {
+func (UnimplementedDataServiceServer) AddBinaryData(context.Context, *AddBinaryDataRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddBinaryData not implemented")
 }
-func (UnimplementedDataServiceServer) AddBankCardDetail(context.Context, *AddBankCardDetailRequest) (*AddBankCardDetailResponse, error) {
+func (UnimplementedDataServiceServer) AddBankCardDetail(context.Context, *AddBankCardDetailRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddBankCardDetail not implemented")
 }
 func (UnimplementedDataServiceServer) GetLoginPasswordPairs(context.Context, *GetLoginPasswordPairsRequest) (*GetLoginPasswordPairsResponse, error) {

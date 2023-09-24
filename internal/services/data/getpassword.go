@@ -24,17 +24,17 @@ func (s *Service) GetLoginPasswordPairs(ctx context.Context, in *api.GetLoginPas
 
 	result := make([]*api.LoginPasswordPair, len(pairs))
 	for i, pair := range pairs {
-		password, err := encryption.Decrypt(pair.EncryptedPassword, []byte(constants.EncryptionKey))
+		clientEncryptedPassword, err := encryption.Decrypt(pair.EncryptedPassword, []byte(constants.EncryptionKey))
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "failed to decrypt password: %v", err)
 		}
 
 		result[i] = &api.LoginPasswordPair{
-			Id:          int64(pair.ID),
-			Login:       pair.Login,
-			Password:    password,
-			Description: pair.Description,
-			ServiceName: pair.ServiceName,
+			Id:                int64(pair.ID),
+			Login:             pair.Login,
+			EncryptedPassword: clientEncryptedPassword,
+			Description:       pair.Description,
+			ServiceName:       pair.ServiceName,
 		}
 	}
 

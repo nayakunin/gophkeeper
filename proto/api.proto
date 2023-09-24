@@ -16,10 +16,10 @@ service RegistrationService {
 
 // The data service definition
 service DataService {
-  rpc AddLoginPasswordPair (AddLoginPasswordPairRequest) returns (AddLoginPasswordPairResponse);
-  rpc AddTextData (AddTextDataRequest) returns (AddTextDataResponse);
-  rpc AddBinaryData (AddBinaryDataRequest) returns (AddBinaryDataResponse);
-  rpc AddBankCardDetail (AddBankCardDetailRequest) returns (AddBankCardDetailResponse);
+  rpc AddLoginPasswordPair (AddLoginPasswordPairRequest) returns (Empty);
+  rpc AddTextData (AddTextDataRequest) returns (Empty);
+  rpc AddBinaryData (AddBinaryDataRequest) returns (Empty);
+  rpc AddBankCardDetail (AddBankCardDetailRequest) returns (Empty);
   rpc GetLoginPasswordPairs (GetLoginPasswordPairsRequest) returns (GetLoginPasswordPairsResponse);
   rpc GetTextData (Empty) returns (GetTextDataResponse);
   rpc GetBinaryData (Empty) returns (GetBinaryDataResponse);
@@ -54,29 +54,14 @@ message AddLoginPasswordPairRequest {
   string description = 4;
 }
 
-message AddLoginPasswordPairResponse {
-  string message = 1;
-  bool success = 2;
-}
-
 message AddTextDataRequest {
   string description = 1;
   string encrypted_text = 2;
 }
 
-message AddTextDataResponse {
-  string message = 1;
-  bool success = 2;
-}
-
 message AddBinaryDataRequest {
   string description = 1;
   bytes encrypted_data = 2;
-}
-
-message AddBinaryDataResponse {
-  string message = 1;
-  bool success = 2;
 }
 
 message AddBankCardDetailRequest {
@@ -87,10 +72,6 @@ message AddBankCardDetailRequest {
   string description = 5;
 }
 
-message AddBankCardDetailResponse {
-  string message = 1;
-  bool success = 2;
-}
 
 message GetLoginPasswordPairsRequest {
   string service_name = 1;

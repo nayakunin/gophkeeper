@@ -10,7 +10,7 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
-func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.RegisterUserResponse, error) {
+func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.Empty, error) {
 	passwordHash, err := auth.HashPassword(in.Password)
 	if err != nil {
 		return nil, fmt.Errorf("unable to hash password: %w", err)
@@ -26,8 +26,5 @@ func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest)
 		return nil, fmt.Errorf("unable to create user: %w", err)
 	}
 
-	return &api.RegisterUserResponse{
-		Message: "User created",
-		Success: true,
-	}, nil
+	return &api.Empty{}, nil
 }
