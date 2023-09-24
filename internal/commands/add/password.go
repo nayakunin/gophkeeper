@@ -55,7 +55,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 
 			md := utils.GetRequestMetadata(token)
 			ctx := metadata.NewOutgoingContext(context.Background(), md)
-			response, err := client.AddLoginPasswordPair(ctx, &api.AddLoginPasswordPairRequest{
+			_, err = client.AddLoginPasswordPair(ctx, &api.AddLoginPasswordPairRequest{
 				ServiceName:       serviceName,
 				Login:             login,
 				EncryptedPassword: encryptedPassword,
@@ -65,8 +65,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 				return fmt.Errorf("could not add password: %w", err)
 			}
 
-			fmt.Printf("Password added: %s\n", response.GetMessage())
-
+			fmt.Println("Password added")
 			return nil
 		},
 	}
