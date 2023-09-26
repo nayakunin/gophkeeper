@@ -16,6 +16,7 @@ type Storage interface {
 	AddTextData(userID int64, text, description string) error
 }
 
+// Service TODO: Add encryption as a service
 // Service is a struct of the grpc.
 type Service struct {
 	api.UnimplementedDataServiceServer

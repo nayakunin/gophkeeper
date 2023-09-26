@@ -94,10 +94,14 @@ message GetLoginPasswordPairsResponse {
   repeated LoginPasswordPair login_password_pairs = 1;
 }
 
-message GetTextDataResponse {
+message GetTextDataResponseItem {
   int64 id = 1;
   string encrypted_text = 2;
   string description = 3;
+}
+
+message GetTextDataResponse {
+  repeated GetTextDataResponseItem text_data = 1;
 }
 
 message GetBinaryDataResponse {

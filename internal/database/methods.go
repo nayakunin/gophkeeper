@@ -30,13 +30,13 @@ func (s Storage) GetUser(username string) (*User, error) {
 
 	conn, err := s.Pool.Acquire(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not acquire connection: %w", err)
 	}
 	defer conn.Release()
 
 	var user User
 	if err = conn.QueryRow(ctx, `SELECT id, username, password_hash, encrypted_master_key FROM users WHERE username = $1`, username).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.EncryptedMasterKey); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not select user: %w", err)
 	}
 
 	return &user, nil
@@ -48,8 +48,30 @@ func (s Storage) GetBinaryData(userID int64) ([]BinaryData, error) {
 }
 
 func (s Storage) GetTextData(userID int64) ([]TextData, error) {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
+	defer cancel()
+
+	conn, err := s.Pool.Acquire(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("could not acquire connection: %w", err)
+	}
+	defer conn.Release()
+
+	rows, err := conn.Query(ctx, `SELECT id, user_id, encrypted_text, description FROM text_data WHERE user_id = $1`, userID)
+	if err != nil {
+		return nil, fmt.Errorf("could not select text data: %w", err)
+	}
+
+	var textData []TextData
+	for rows.Next() {
+		var data TextData
+		if err = rows.Scan(&data.ID, &data.UserID, &data.EncryptedText, &data.Description); err != nil {
+			return nil, fmt.Errorf("could not scan text data: %w", err)
+		}
+		textData = append(textData, data)
+	}
+
+	return textData, nil
 }
 
 func (s Storage) GetBankCardDetails(userID int64, cardName string) ([]BankCardDetail, error) {
@@ -63,13 +85,13 @@ func (s Storage) GetLoginPasswordPairs(userID int64, serviceName string) ([]Logi
 
 	conn, err := s.Pool.Acquire(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not acquire connection: %w", err)
 	}
 	defer conn.Release()
 
 	rows, err := conn.Query(ctx, `SELECT id, user_id, service_name, login, encrypted_password, description FROM login_password_pairs WHERE user_id = $1 AND service_name = $2`, userID, serviceName)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not select login password pairs: %w", err)
 	}
 
 	var pairs []LoginPasswordPair
@@ -90,13 +112,13 @@ func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login, encrypte
 
 	conn, err := s.Pool.Acquire(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not acquire connection: %w", err)
 	}
 	defer conn.Release()
 
 	_, err = conn.Exec(ctx, `INSERT INTO login_password_pairs (user_id, service_name, login, encrypted_password, description) VALUES ($1, $2, $3, $4, $5)`, userID, serviceName, login, encryptedPassword, description)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not insert login password pair: %w", err)
 	}
 
 	return nil
@@ -113,6 +135,19 @@ func (s Storage) AddBinaryData(userID int64, binary []byte, description string) 
 }
 
 func (s Storage) AddTextData(userID int64, text, description string) error {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
+	defer cancel()
+
+	conn, err := s.Pool.Acquire(ctx)
+	if err != nil {
+		return fmt.Errorf("could not acquire connection: %w", err)
+	}
+	defer conn.Release()
+
+	_, err = conn.Exec(ctx, `INSERT INTO text_data (user_id, encrypted_text, description) VALUES ($1, $2, $3)`, userID, text, description)
+	if err != nil {
+		return fmt.Errorf("could not insert text data: %w", err)
+	}
+
+	return nil
 }
