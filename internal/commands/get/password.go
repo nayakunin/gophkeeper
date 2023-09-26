@@ -6,8 +6,6 @@ import (
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/pkg/utils/encryption"
-
 	"github.com/nayakunin/gophkeeper/pkg/utils"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
@@ -61,7 +59,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 			}
 			results := make([]Result, len(response.GetLoginPasswordPairs()))
 			for i, pair := range response.GetLoginPasswordPairs() {
-				password, err := encryption.Decrypt(pair.GetEncryptedPassword(), encryptionKey)
+				password, err := s.encryption.Decrypt(pair.GetEncryptedPassword(), encryptionKey)
 				if err != nil {
 					return fmt.Errorf("could not decrypt password: %w", err)
 				}

@@ -8,13 +8,19 @@ type CredentialsService interface {
 	GetCredentials() (string, []byte, error)
 }
 
-type Service struct {
-	credentialsService CredentialsService
+type Encryption interface {
+	Decrypt(text string, key []byte) (string, error)
 }
 
-func NewService(credentialsService CredentialsService) *Service {
+type Service struct {
+	credentialsService CredentialsService
+	encryption         Encryption
+}
+
+func NewService(credentialsService CredentialsService, encryption Encryption) *Service {
 	return &Service{
 		credentialsService: credentialsService,
+		encryption:         encryption,
 	}
 }
 

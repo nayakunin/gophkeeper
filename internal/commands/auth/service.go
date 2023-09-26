@@ -6,12 +6,18 @@ type LocalStorage interface {
 	DeleteCredentials() error
 }
 
-type Service struct {
-	storage LocalStorage
+type Encryption interface {
+	GenerateKey() ([]byte, error)
 }
 
-func NewService(storage LocalStorage) Service {
+type Service struct {
+	storage    LocalStorage
+	encryption Encryption
+}
+
+func NewService(storage LocalStorage, encryption Encryption) Service {
 	return Service{
-		storage: storage,
+		storage:    storage,
+		encryption: encryption,
 	}
 }

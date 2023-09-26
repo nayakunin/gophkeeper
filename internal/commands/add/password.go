@@ -6,7 +6,6 @@ import (
 
 	"github.com/nayakunin/gophkeeper/constants"
 	"github.com/nayakunin/gophkeeper/pkg/utils"
-	"github.com/nayakunin/gophkeeper/pkg/utils/encryption"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -48,7 +47,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 				return fmt.Errorf("could not get description: %w", err)
 			}
 
-			encryptedPassword, err := encryption.Encrypt(password, encryptionKey)
+			encryptedPassword, err := s.encryption.Encrypt(password, encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not encrypt password: %w", err)
 			}

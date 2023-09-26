@@ -6,7 +6,6 @@ import (
 
 	"github.com/nayakunin/gophkeeper/constants"
 	"github.com/nayakunin/gophkeeper/pkg/utils"
-	"github.com/nayakunin/gophkeeper/pkg/utils/encryption"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -40,7 +39,7 @@ func (s *Service) textCmd() *cobra.Command {
 				return fmt.Errorf("could not get description: %w", err)
 			}
 
-			encryptedText, err := encryption.Encrypt(text, encryptionKey)
+			encryptedText, err := s.encryption.Encrypt(text, encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not encrypt text: %w", err)
 			}

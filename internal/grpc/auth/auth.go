@@ -6,12 +6,11 @@ import (
 
 	"github.com/nayakunin/gophkeeper/constants"
 	"github.com/nayakunin/gophkeeper/pkg/utils/auth"
-	"github.com/nayakunin/gophkeeper/pkg/utils/encryption"
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
 func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUserRequest) (*api.AuthenticateUserResponse, error) {
-	user, err := s.Storage.GetUser(in.Username)
+	user, err := s.storage.GetUser(in.Username)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get user: %w", err)
 	}
@@ -25,7 +24,7 @@ func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUser
 		return nil, fmt.Errorf("unable to generate jwt: %w", err)
 	}
 
-	decodedEncryptionKey, err := encryption.Decrypt(user.EncryptedMasterKey, []byte(constants.EncryptionKey))
+	decodedEncryptionKey, err := s.encryption.Decrypt(user.EncryptedMasterKey, []byte(constants.EncryptionKey))
 	if err != nil {
 		return nil, fmt.Errorf("unable to decrypt master key: %w", err)
 	}

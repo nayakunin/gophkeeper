@@ -9,15 +9,21 @@ type Storage interface {
 	GetUser(username string) (*database.User, error)
 }
 
+type Encryption interface {
+	Decrypt(text string, key []byte) (string, error)
+}
+
 // Service is a struct of the grpc.
 type Service struct {
 	api.UnimplementedAuthServiceServer
-	Storage Storage
+	storage    Storage
+	encryption Encryption
 }
 
 // NewService returns a new Service.
-func NewService(storage Storage) *Service {
+func NewService(storage Storage, encryption Encryption) *Service {
 	return &Service{
-		Storage: storage,
+		storage:    storage,
+		encryption: encryption,
 	}
 }

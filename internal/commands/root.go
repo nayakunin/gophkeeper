@@ -10,21 +10,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CredentialsService interface {
+type LocalStorage interface {
 	SaveCredentials(token string, encryptionKey []byte) error
 	GetCredentials() (string, []byte, error)
 	DeleteCredentials() error
 }
 
-type Root struct {
-	cmd                *cobra.Command
-	credentialsService CredentialsService
+type Encryption interface {
+	GenerateKey() ([]byte, error)
+	Encrypt(text string, key []byte) (string, error)
+	Decrypt(text string, key []byte) (string, error)
 }
 
-func NewRoot(credentialsService CredentialsService) Root {
-	addService := add.NewService(credentialsService)
-	authService := auth.NewService(credentialsService)
-	getService := get.NewService(credentialsService)
+type Root struct {
+	cmd          *cobra.Command
+	localStorage LocalStorage
+}
+
+func NewRoot(localStorage LocalStorage, encryption Encryption) Root {
+	addService := add.NewService(localStorage, encryption)
+	authService := auth.NewService(localStorage, encryption)
+	getService := get.NewService(localStorage, encryption)
 
 	rootCmd := &cobra.Command{
 		Use:   "gophkeeper",

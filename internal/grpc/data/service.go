@@ -16,16 +16,22 @@ type Storage interface {
 	AddTextData(userID int64, text, description string) error
 }
 
-// Service TODO: Add encryption as a service
+type Encryption interface {
+	Encrypt(text string, key []byte) (string, error)
+	Decrypt(text string, key []byte) (string, error)
+}
+
 // Service is a struct of the grpc.
 type Service struct {
 	api.UnimplementedDataServiceServer
-	Storage Storage
+	storage    Storage
+	encryption Encryption
 }
 
 // NewService returns a new Service.
-func NewService(storage Storage) *Service {
+func NewService(storage Storage, encryption Encryption) *Service {
 	return &Service{
-		Storage: storage,
+		storage:    storage,
+		encryption: encryption,
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/pkg/utils/encryption"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -27,7 +26,7 @@ func (s *Service) RegisterCmd() *cobra.Command {
 
 			client := api.NewRegistrationServiceClient(conn)
 
-			encryptionKey, err := encryption.GenerateKey()
+			encryptionKey, err := s.encryption.GenerateKey()
 
 			if err != nil {
 				return fmt.Errorf("could not generate encryption key: %w", err)
