@@ -22,14 +22,6 @@ func (s *Service) passwordCmd() *cobra.Command {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
 
-			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
-			if err != nil {
-				return fmt.Errorf("could not connect: %w", err)
-			}
-			defer conn.Close()
-
-			client := api.NewDataServiceClient(conn)
-
 			serviceName, err := cmd.Flags().GetString("service")
 			if err != nil {
 				return fmt.Errorf("could not get service name: %w", err)
@@ -52,6 +44,13 @@ func (s *Service) passwordCmd() *cobra.Command {
 				return fmt.Errorf("could not encrypt password: %w", err)
 			}
 
+			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+			if err != nil {
+				return fmt.Errorf("could not connect: %w", err)
+			}
+			defer conn.Close()
+
+			client := api.NewDataServiceClient(conn)
 			md := utils.GetRequestMetadata(token)
 			ctx := metadata.NewOutgoingContext(context.Background(), md)
 			_, err = client.AddLoginPasswordPair(ctx, &api.AddLoginPasswordPairRequest{

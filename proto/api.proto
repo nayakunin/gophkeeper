@@ -77,7 +77,6 @@ message AddBankCardDetailRequest {
   string description = 5;
 }
 
-
 message GetLoginPasswordPairsRequest {
   string service_name = 1;
 }
@@ -116,7 +115,7 @@ message GetBankCardDetailsRequest {
 
 message BankCardDetail {
   int64 id = 1;
-  string encrypted_card_name = 2;
+  string card_name = 2;
   string encrypted_card_number = 3;
   string encrypted_expiry_date = 4;
   string encrypted_cvc = 5;

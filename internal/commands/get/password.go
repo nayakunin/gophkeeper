@@ -2,7 +2,6 @@ package get
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -72,13 +71,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 				}
 			}
 
-			jsonData, err := json.MarshalIndent(results, "", "  ")
-			if err != nil {
-				return fmt.Errorf("could not marshal response: %w", err)
-			}
-
-			fmt.Printf("Passwords for %s: %s\n", serviceName, string(jsonData))
-			return nil
+			return utils.PrintJSON(results)
 		},
 	}
 

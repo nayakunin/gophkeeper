@@ -75,8 +75,30 @@ func (s Storage) GetTextData(userID int64) ([]TextData, error) {
 }
 
 func (s Storage) GetBankCardDetails(userID int64, cardName string) ([]BankCardDetail, error) {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
+	defer cancel()
+
+	conn, err := s.Pool.Acquire(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("could not acquire connection: %w", err)
+	}
+	defer conn.Release()
+
+	rows, err := conn.Query(ctx, `SELECT id, user_id, card_name, encrypted_card_number, encrypted_expiry_date, encrypted_cvc, description FROM bank_card_details WHERE user_id = $1 AND card_name = $2`, userID, cardName)
+	if err != nil {
+		return nil, fmt.Errorf("could not select bank card details: %w", err)
+	}
+
+	var details []BankCardDetail
+	for rows.Next() {
+		var detail BankCardDetail
+		if err = rows.Scan(&detail.ID, &detail.UserID, &detail.CardName, &detail.EncryptedCardNumber, &detail.EncryptedExpiryDate, &detail.EncryptedCVC, &detail.Description); err != nil {
+			return nil, fmt.Errorf("could not scan bank card detail: %w", err)
+		}
+		details = append(details, detail)
+	}
+
+	return details, nil
 }
 
 func (s Storage) GetLoginPasswordPairs(userID int64, serviceName string) ([]LoginPasswordPair, error) {
@@ -125,8 +147,21 @@ func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login, encrypte
 }
 
 func (s Storage) AddBankCardDetails(userID int64, cardName, encryptedCardNumber, encryptedExpiryDate, encryptedCVC, description string) error {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
+	defer cancel()
+
+	conn, err := s.Pool.Acquire(ctx)
+	if err != nil {
+		return fmt.Errorf("could not acquire connection: %w", err)
+	}
+	defer conn.Release()
+
+	_, err = conn.Exec(ctx, `INSERT INTO bank_card_details (user_id, card_name, encrypted_card_number, encrypted_expiry_date, encrypted_cvc, description) VALUES ($1, $2, $3, $4, $5, $6)`, userID, cardName, encryptedCardNumber, encryptedExpiryDate, encryptedCVC, description)
+	if err != nil {
+		return fmt.Errorf("could not insert bank card detail: %w", err)
+	}
+
+	return nil
 }
 
 func (s Storage) AddBinaryData(userID int64, binary []byte, description string) error {

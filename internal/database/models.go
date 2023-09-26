@@ -53,6 +53,7 @@ type BankCardDetail struct {
 	EncryptedCardNumber string    `json:"encrypted_card_number"`
 	EncryptedExpiryDate string    `json:"encrypted_expiry_date"`
 	EncryptedCVC        string    `json:"encrypted_cvc"`
+	Description         string    `json:"description"`
 	CreatedAt           time.Time `json:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at"`
 }
