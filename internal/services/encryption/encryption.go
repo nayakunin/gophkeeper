@@ -43,11 +43,6 @@ func (s *Service) Encrypt(text, key []byte) ([]byte, error) {
 
 // Decrypt from base64 to decrypted string
 func (s *Service) Decrypt(text, key []byte) ([]byte, error) {
-	//decoded, err := utils.DecodeHex(text)
-	//if err != nil {
-	//	return "", fmt.Errorf("unable to decode hex: %w", err)
-	//}
-
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create new cipher: %w", err)
