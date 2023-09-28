@@ -4,10 +4,12 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
+// Storage is an interface for storing credentials.
 type Storage interface {
 	CreateUser(username string, passwordHash, encryptedMasterKey []byte) (int64, error)
 }
 
+// Encryption is an interface for encrypting and decrypting data.
 type Encryption interface {
 	Encrypt(text, key []byte) ([]byte, error)
 }

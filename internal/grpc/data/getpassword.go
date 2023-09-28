@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// GetLoginPasswordPairs returns login password pairs.
 func (s *Service) GetLoginPasswordPairs(ctx context.Context, in *api.GetLoginPasswordPairsRequest) (*api.GetLoginPasswordPairsResponse, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

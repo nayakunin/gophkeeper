@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// AddBankCardDetail adds bank card detail.
 func (s *Service) AddBankCardDetail(ctx context.Context, in *api.AddBankCardDetailRequest) (*api.Empty, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

@@ -8,8 +8,10 @@ import (
 	"github.com/nayakunin/gophkeeper/pkg/utils"
 )
 
+// Service is a struct of the encryption service.
 type Service struct{}
 
+// NewService returns a new Service.
 func NewService() *Service {
 	return &Service{}
 }

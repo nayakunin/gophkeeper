@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// AddLoginPasswordPair adds login password pair.
 func (s *Service) AddLoginPasswordPair(ctx context.Context, in *api.AddLoginPasswordPairRequest) (*api.Empty, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

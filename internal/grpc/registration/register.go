@@ -9,6 +9,7 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
+// RegisterUser registers user.
 func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.RegisterUserResponse, error) {
 	passwordHash, err := auth.HashPassword(in.Password)
 	if err != nil {

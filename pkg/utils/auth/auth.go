@@ -12,13 +12,16 @@ type tokenInfoKey struct {
 	name string
 }
 
+// UserIDKey is the key for the user id in the context.
 var UserIDKey = &tokenInfoKey{"userID"}
 
+// CustomClaims is a struct for JWT token claims.
 type CustomClaims struct {
 	UserID int64 `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
+// GenerateJWT generates JWT token.
 func GenerateJWT(userID int64) (string, error) {
 	claims := CustomClaims{
 		UserID: userID,
@@ -29,10 +32,12 @@ func GenerateJWT(userID int64) (string, error) {
 	return token.SignedString([]byte(constants.SecretKey))
 }
 
+// ComparePassword compares hash and password.
 func ComparePassword(hash, password []byte) error {
 	return bcrypt.CompareHashAndPassword(hash, password)
 }
 
+// HashPassword hashes password.
 func HashPassword(password string) ([]byte, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {

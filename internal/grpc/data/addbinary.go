@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// AddBinaryData adds binary data.
 func (s *Service) AddBinaryData(ctx context.Context, in *api.AddBinaryDataRequest) (*api.Empty, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

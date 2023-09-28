@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// GetBankCardDetails returns bank card details.
 func (s *Service) GetBankCardDetails(ctx context.Context, in *api.GetBankCardDetailsRequest) (*api.GetBankCardDetailsResponse, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

@@ -5,6 +5,7 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
+// Storage is an interface for storing credentials.
 type Storage interface {
 	GetBinaryData(userID int64) ([]database.BinaryData, error)
 	GetTextData(userID int64) ([]database.TextData, error)
@@ -16,6 +17,7 @@ type Storage interface {
 	AddTextData(userID int64, text []byte, description string) error
 }
 
+// Encryption is an interface for encrypting and decrypting data.
 type Encryption interface {
 	Encrypt(text, key []byte) ([]byte, error)
 	Decrypt(text, key []byte) ([]byte, error)

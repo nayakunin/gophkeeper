@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// AddTextData adds text data.
 func (s *Service) AddTextData(ctx context.Context, in *api.AddTextDataRequest) (*api.Empty, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// CreateUser creates a new user in the database
 func (s Storage) CreateUser(username string, passwordHash []byte, encryptedMasterKey []byte) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -24,6 +25,7 @@ func (s Storage) CreateUser(username string, passwordHash []byte, encryptedMaste
 	return userID, nil
 }
 
+// GetUser returns a user from the database
 func (s Storage) GetUser(username string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -42,6 +44,7 @@ func (s Storage) GetUser(username string) (*User, error) {
 	return &user, nil
 }
 
+// GetBinaryData returns binary data from the database
 func (s Storage) GetBinaryData(userID int64) ([]BinaryData, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -69,6 +72,7 @@ func (s Storage) GetBinaryData(userID int64) ([]BinaryData, error) {
 	return binaryData, nil
 }
 
+// GetTextData returns text data from the database
 func (s Storage) GetTextData(userID int64) ([]TextData, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -96,6 +100,7 @@ func (s Storage) GetTextData(userID int64) ([]TextData, error) {
 	return textData, nil
 }
 
+// GetBankCardDetails returns bank card details from the database
 func (s Storage) GetBankCardDetails(userID int64, cardName string) ([]BankCardDetail, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -123,6 +128,7 @@ func (s Storage) GetBankCardDetails(userID int64, cardName string) ([]BankCardDe
 	return details, nil
 }
 
+// GetLoginPasswordPairs returns login password pairs from the database
 func (s Storage) GetLoginPasswordPairs(userID int64, serviceName string) ([]LoginPasswordPair, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -150,6 +156,7 @@ func (s Storage) GetLoginPasswordPairs(userID int64, serviceName string) ([]Logi
 	return pairs, nil
 }
 
+// AddLoginPasswordPair adds a new login password pair to the database
 func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login string, encryptedPassword []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -168,6 +175,7 @@ func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login string, e
 	return nil
 }
 
+// AddBankCardDetails adds a new bank card detail to the database
 func (s Storage) AddBankCardDetails(userID int64, cardName string, encryptedCardNumber, encryptedExpiryDate, encryptedCVC []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -186,6 +194,7 @@ func (s Storage) AddBankCardDetails(userID int64, cardName string, encryptedCard
 	return nil
 }
 
+// AddBinaryData adds a new binary data to the database
 func (s Storage) AddBinaryData(userID int64, binary []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
@@ -204,6 +213,7 @@ func (s Storage) AddBinaryData(userID int64, binary []byte, description string) 
 	return nil
 }
 
+// AddTextData adds a new text data to the database
 func (s Storage) AddTextData(userID int64, text []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()

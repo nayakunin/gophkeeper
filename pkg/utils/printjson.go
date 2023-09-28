@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// PrintJSON prints json to stdout.
 func PrintJSON(v interface{}) error {
 	jsonData, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {

@@ -19,6 +19,7 @@ type DBPool interface {
 	Ping(ctx context.Context) error
 }
 
+// Storage is a struct of the database.
 type Storage struct {
 	Pool DBPool
 }
@@ -87,6 +88,7 @@ func initDB(conn *pgxpool.Conn) error {
 	return nil
 }
 
+// NewStorage creates a new Storage struct
 func NewStorage(databaseURL string) (*Storage, error) {
 	pool, err := pgxpool.New(context.Background(), databaseURL)
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// GetBinaryData returns binary data.
 func (s *Service) GetBinaryData(ctx context.Context, in *api.Empty) (*api.GetBinaryDataResponse, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

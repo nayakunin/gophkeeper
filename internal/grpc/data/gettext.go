@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// GetTextData returns text data.
 func (s *Service) GetTextData(ctx context.Context, in *api.Empty) (*api.GetTextDataResponse, error) {
 	userID, ok := ctx.Value(auth.UserIDKey).(int64)
 	if !ok {

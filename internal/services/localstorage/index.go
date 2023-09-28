@@ -4,22 +4,26 @@ import (
 	"fmt"
 )
 
+// CredentialsService is an interface for storing credentials.
 type CredentialsService interface {
 	Set(key string, value []byte) error
 	Get(key string) ([]byte, error)
 	Delete(key string) error
 }
 
+// Storage is a struct of the grpc.
 type Storage struct {
 	credentialsService CredentialsService
 }
 
+// NewStorage returns a new Service.
 func NewStorage(credentialsService CredentialsService) *Storage {
 	return &Storage{
 		credentialsService: credentialsService,
 	}
 }
 
+// SaveCredentials saves credentials to the storage.
 func (s *Storage) SaveCredentials(token string, encryptionKey []byte) error {
 	if err := s.credentialsService.Set("token", []byte(token)); err != nil {
 		return fmt.Errorf("unable to save token: %w", err)
@@ -32,6 +36,7 @@ func (s *Storage) SaveCredentials(token string, encryptionKey []byte) error {
 	return nil
 }
 
+// GetCredentials returns credentials from the storage.
 func (s *Storage) GetCredentials() (token string, encryptionKey []byte, err error) {
 	tokenBytes, err := s.credentialsService.Get("token")
 	if err != nil {
@@ -46,6 +51,7 @@ func (s *Storage) GetCredentials() (token string, encryptionKey []byte, err erro
 	return string(tokenBytes), encryptionKey, nil
 }
 
+// DeleteCredentials deletes credentials from the storage.
 func (s *Storage) DeleteCredentials() error {
 	if err := s.credentialsService.Delete("token"); err != nil {
 		return fmt.Errorf("unable to delete token: %w", err)

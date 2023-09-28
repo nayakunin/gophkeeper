@@ -9,6 +9,7 @@ import (
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
+// AuthenticateUser authenticates a user.
 func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUserRequest) (*api.AuthenticateUserResponse, error) {
 	user, err := s.storage.GetUser(in.Username)
 	if err != nil {
