@@ -2,7 +2,6 @@ package registration
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -16,7 +15,7 @@ func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest)
 		return nil, fmt.Errorf("unable to hash password: %w", err)
 	}
 
-	encryptedMasterKey, err := s.encryption.Encrypt(hex.EncodeToString(in.GetEncryptionKey()), []byte(constants.EncryptionKey))
+	encryptedMasterKey, err := s.encryption.Encrypt(in.GetEncryptionKey(), []byte(constants.EncryptionKey))
 	if err != nil {
 		return nil, fmt.Errorf("unable to encrypt master key: %w", err)
 	}

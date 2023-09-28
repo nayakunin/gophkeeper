@@ -28,7 +28,7 @@ func (s *Service) LoginCmd() *cobra.Command {
 
 			response, err := client.AuthenticateUser(context.Background(), &api.AuthenticateUserRequest{
 				Username: username,
-				Password: password,
+				Password: []byte(password),
 			})
 			if err != nil {
 				return fmt.Errorf("could not authenticate user: %w", err)

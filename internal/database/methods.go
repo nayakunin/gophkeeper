@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (s Storage) CreateUser(username, passwordHash, encryptedMasterKey string) (int64, error) {
+func (s Storage) CreateUser(username string, passwordHash []byte, encryptedMasterKey []byte) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 
@@ -128,7 +128,7 @@ func (s Storage) GetLoginPasswordPairs(userID int64, serviceName string) ([]Logi
 	return pairs, nil
 }
 
-func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login, encryptedPassword, description string) error {
+func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login string, encryptedPassword []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 
@@ -146,7 +146,7 @@ func (s Storage) AddLoginPasswordPair(userID int64, serviceName, login, encrypte
 	return nil
 }
 
-func (s Storage) AddBankCardDetails(userID int64, cardName, encryptedCardNumber, encryptedExpiryDate, encryptedCVC, description string) error {
+func (s Storage) AddBankCardDetails(userID int64, cardName string, encryptedCardNumber, encryptedExpiryDate, encryptedCVC []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 
@@ -169,7 +169,7 @@ func (s Storage) AddBinaryData(userID int64, binary []byte, description string) 
 	panic("implement me")
 }
 
-func (s Storage) AddTextData(userID int64, text, description string) error {
+func (s Storage) AddTextData(userID int64, text []byte, description string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 

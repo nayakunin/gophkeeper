@@ -27,8 +27,8 @@ func initDB(conn *pgxpool.Conn) error {
 	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		username VARCHAR(50) UNIQUE NOT NULL,
-		password_hash VARCHAR(256) NOT NULL,
-    	encrypted_master_key VARCHAR(256) NOT NULL,
+		password_hash BYTEA NOT NULL,
+    	encrypted_master_key BYTEA NOT NULL,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
 	)`); err != nil {
@@ -38,9 +38,9 @@ func initDB(conn *pgxpool.Conn) error {
 	if _, err := conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS login_password_pairs (
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
-		service_name VARCHAR(50),
-		login VARCHAR(50),
-		encrypted_password VARCHAR(256),
+		service_name VARCHAR(50) NOT NULL,
+		login VARCHAR(50) NOT NULL,
+		encrypted_password BYTEA NOT NULL,
 		description TEXT,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
@@ -52,7 +52,7 @@ func initDB(conn *pgxpool.Conn) error {
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		description TEXT,
-		encrypted_text TEXT,
+		encrypted_text BYTEA NOT NULL,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
 	)`); err != nil {
@@ -63,7 +63,7 @@ func initDB(conn *pgxpool.Conn) error {
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		description TEXT,
-		encrypted_data BYTEA,
+		encrypted_data BYTEA NOT NULL,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
 	)`); err != nil {
@@ -74,10 +74,10 @@ func initDB(conn *pgxpool.Conn) error {
 		id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(id),
 		description TEXT,
-		card_name VARCHAR(50),
-		encrypted_card_number VARCHAR(50),
-		encrypted_expiry_date VARCHAR(10),
-		encrypted_cvc VARCHAR(5),
+		card_name VARCHAR(50) NOT NULL,
+		encrypted_card_number BYTEA NOT NULL,
+		encrypted_expiry_date BYTEA NOT NULL,
+		encrypted_cvc BYTEA NOT NULL,
 		created_at TIMESTAMP DEFAULT current_timestamp,
 		updated_at TIMESTAMP DEFAULT current_timestamp
 	);`); err != nil {

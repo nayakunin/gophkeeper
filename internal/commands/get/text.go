@@ -54,7 +54,7 @@ func (s *Service) textCmd() *cobra.Command {
 
 				results[i] = Result{
 					Description: textData.GetDescription(),
-					Text:        decryptedText,
+					Text:        string(decryptedText),
 				}
 			}
 

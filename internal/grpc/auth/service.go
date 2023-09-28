@@ -10,7 +10,7 @@ type Storage interface {
 }
 
 type Encryption interface {
-	Decrypt(text string, key []byte) (string, error)
+	Decrypt(text, key []byte) ([]byte, error)
 }
 
 // Service is a struct of the grpc.

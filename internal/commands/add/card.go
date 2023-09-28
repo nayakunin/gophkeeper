@@ -22,7 +22,7 @@ func (s *Service) cardCmd() *cobra.Command {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
 
-			name, err := cmd.Flags().GetString("name")
+			name, err := cmd.Flags().GetString("label")
 			if err != nil {
 				return fmt.Errorf("could not get card name: %w", err)
 			}
@@ -34,7 +34,7 @@ func (s *Service) cardCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("could not get card expiration date: %w", err)
 			}
-			cvv, err := cmd.Flags().GetString("cvv")
+			cvc, err := cmd.Flags().GetString("cvc")
 			if err != nil {
 				return fmt.Errorf("could not get card CVV: %w", err)
 			}
@@ -43,17 +43,17 @@ func (s *Service) cardCmd() *cobra.Command {
 
 			}
 
-			encryptedNumber, err := s.encryption.Encrypt(number, encryptionKey)
+			encryptedNumber, err := s.encryption.Encrypt([]byte(number), encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not encrypt card number: %w", err)
 			}
-			encryptedExpiration, err := s.encryption.Encrypt(expiration, encryptionKey)
+			encryptedExpiration, err := s.encryption.Encrypt([]byte(expiration), encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not encrypt card expiration date: %w", err)
 			}
-			encryptedCvv, err := s.encryption.Encrypt(cvv, encryptionKey)
+			encryptedCVC, err := s.encryption.Encrypt([]byte(cvc), encryptionKey)
 			if err != nil {
-				return fmt.Errorf("could not encrypt card CVV: %w", err)
+				return fmt.Errorf("could not encrypt card CVC: %w", err)
 			}
 
 			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
@@ -69,7 +69,7 @@ func (s *Service) cardCmd() *cobra.Command {
 				CardName:            name,
 				EncryptedCardNumber: encryptedNumber,
 				EncryptedExpiryDate: encryptedExpiration,
-				EncryptedCvc:        encryptedCvv,
+				EncryptedCvc:        encryptedCVC,
 				Description:         description,
 			})
 			if err != nil {
@@ -81,15 +81,15 @@ func (s *Service) cardCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String("name", "", "Card name")
+	cmd.Flags().StringP("label", "l", "", "Card label")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().String("number", "", "Card number")
+	cmd.Flags().StringP("number", "n", "", "Card number")
 	_ = cmd.MarkFlagRequired("number")
-	cmd.Flags().String("expiration", "", "Card expiration date")
+	cmd.Flags().StringP("expiration", "e", "", "Card expiration date")
 	_ = cmd.MarkFlagRequired("expiration")
-	cmd.Flags().String("cvv", "", "Card CVV")
-	_ = cmd.MarkFlagRequired("cvv")
-	cmd.Flags().String("description", "", "Card description")
+	cmd.Flags().StringP("cvc", "c", "", "Card CVC")
+	_ = cmd.MarkFlagRequired("cvc")
+	cmd.Flags().StringP("description", "d", "", "Card description")
 
 	return cmd
 }

@@ -15,7 +15,7 @@ func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUser
 		return nil, fmt.Errorf("unable to get user: %w", err)
 	}
 
-	if err := auth.ComparePassword(in.Password, user.PasswordHash); err != nil {
+	if err := auth.ComparePassword(user.PasswordHash, in.Password); err != nil {
 		return nil, fmt.Errorf("unable to compare password: %w", err)
 	}
 
@@ -31,6 +31,6 @@ func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUser
 
 	return &api.AuthenticateUserResponse{
 		Token:         jwtToken,
-		EncryptionKey: []byte(decodedEncryptionKey),
+		EncryptionKey: decodedEncryptionKey,
 	}, nil
 }

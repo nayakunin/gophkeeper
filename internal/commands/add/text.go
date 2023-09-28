@@ -39,7 +39,7 @@ func (s *Service) textCmd() *cobra.Command {
 				return fmt.Errorf("could not get description: %w", err)
 			}
 
-			encryptedText, err := s.encryption.Encrypt(text, encryptionKey)
+			encryptedText, err := s.encryption.Encrypt([]byte(text), encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not encrypt text: %w", err)
 			}

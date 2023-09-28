@@ -25,7 +25,7 @@ func (s *Service) cardCmd() *cobra.Command {
 				return fmt.Errorf("please login first")
 			}
 
-			name, err := cmd.Flags().GetString("name")
+			name, err := cmd.Flags().GetString("label")
 			if err != nil {
 				return fmt.Errorf("could not get card name: %w", err)
 			}
@@ -50,7 +50,7 @@ func (s *Service) cardCmd() *cobra.Command {
 			}
 
 			type Result struct {
-				Name        string `json:"name"`
+				Name        string `json:"label"`
 				Number      string `json:"number"`
 				Expiration  string `json:"expiration"`
 				Cvc         string `json:"cvv"`
@@ -72,9 +72,9 @@ func (s *Service) cardCmd() *cobra.Command {
 				}
 				results[i] = Result{
 					Name:        card.GetCardName(),
-					Number:      number,
-					Expiration:  expiration,
-					Cvc:         cvc,
+					Number:      string(number),
+					Expiration:  string(expiration),
+					Cvc:         string(cvc),
 					Description: card.GetDescription(),
 				}
 			}
@@ -83,7 +83,7 @@ func (s *Service) cardCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("name", "n", "", "Card name")
+	cmd.Flags().StringP("label", "l", "", "Card label")
 
 	return cmd
 }

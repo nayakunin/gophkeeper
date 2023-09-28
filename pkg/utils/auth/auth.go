@@ -29,17 +29,17 @@ func GenerateJWT(userID int64) (string, error) {
 	return token.SignedString([]byte(constants.SecretKey))
 }
 
-func ComparePassword(password, hash string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+func ComparePassword(hash, password []byte) error {
+	return bcrypt.CompareHashAndPassword(hash, password)
 }
 
-func HashPassword(password string) (string, error) {
+func HashPassword(password string) ([]byte, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(bytes), nil
+	return bytes, nil
 }
 
 // ParseToken validates and parses the JWT token

@@ -39,7 +39,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 				return fmt.Errorf("could not get description: %w", err)
 			}
 
-			encryptedPassword, err := s.encryption.Encrypt(password, encryptionKey)
+			encryptedPassword, err := s.encryption.Encrypt([]byte(password), encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not encrypt password: %w", err)
 			}

@@ -20,53 +20,54 @@ func (s *Service) GenerateKey() ([]byte, error) {
 }
 
 // Encrypt string to base64 crypto using AES GCM
-func (s *Service) Encrypt(text string, key []byte) (string, error) {
+func (s *Service) Encrypt(text, key []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", fmt.Errorf("unable to create new cipher: %w", err)
+		return nil, fmt.Errorf("unable to create new cipher: %w", err)
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", fmt.Errorf("unable to create new GCM: %w", err)
+		return nil, fmt.Errorf("unable to create new GCM: %w", err)
 	}
 
 	nonce, err := utils.GenerateRandom(aesgcm.NonceSize())
 	if err != nil {
-		return "", fmt.Errorf("unable to generate nonce: %w", err)
+		return nil, fmt.Errorf("unable to generate nonce: %w", err)
 	}
 
-	ciphertext := aesgcm.Seal(nil, nonce, []byte(text), nil)
-	return fmt.Sprintf("%x", append(nonce, ciphertext...)), nil
+	ciphertext := aesgcm.Seal(nil, nonce, text, nil)
+
+	return append(nonce, ciphertext...), nil
 }
 
 // Decrypt from base64 to decrypted string
-func (s *Service) Decrypt(text string, key []byte) (string, error) {
-	decoded, err := utils.DecodeHex(text)
-	if err != nil {
-		return "", fmt.Errorf("unable to decode hex: %w", err)
-	}
+func (s *Service) Decrypt(text, key []byte) ([]byte, error) {
+	//decoded, err := utils.DecodeHex(text)
+	//if err != nil {
+	//	return "", fmt.Errorf("unable to decode hex: %w", err)
+	//}
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", fmt.Errorf("unable to create new cipher: %w", err)
+		return nil, fmt.Errorf("unable to create new cipher: %w", err)
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", fmt.Errorf("unable to create new GCM: %w", err)
+		return nil, fmt.Errorf("unable to create new GCM: %w", err)
 	}
 
 	nonceSize := aesgcm.NonceSize()
-	if len(decoded) < nonceSize {
-		return "", fmt.Errorf("invalid nonce size")
+	if len(text) < nonceSize {
+		return nil, fmt.Errorf("invalid nonce size")
 	}
 
-	nonce, ciphertext := decoded[:nonceSize], decoded[nonceSize:]
-	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
+	nonce, ciphertext := text[:nonceSize], text[nonceSize:]
+	textBytes, err := aesgcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return "", fmt.Errorf("unable to open cipher: %w", err)
+		return nil, fmt.Errorf("unable to open cipher: %w", err)
 	}
 
-	return string(plaintext), nil
+	return textBytes, nil
 }

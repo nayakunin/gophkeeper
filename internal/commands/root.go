@@ -18,8 +18,8 @@ type LocalStorage interface {
 
 type Encryption interface {
 	GenerateKey() ([]byte, error)
-	Encrypt(text string, key []byte) (string, error)
-	Decrypt(text string, key []byte) (string, error)
+	Encrypt(text, key []byte) ([]byte, error)
+	Decrypt(text, key []byte) ([]byte, error)
 }
 
 type Root struct {

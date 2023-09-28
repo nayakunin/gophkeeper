@@ -7,7 +7,7 @@ type CredentialsService interface {
 }
 
 type Encryption interface {
-	Encrypt(text string, key []byte) (string, error)
+	Encrypt(text, key []byte) ([]byte, error)
 }
 
 type Service struct {

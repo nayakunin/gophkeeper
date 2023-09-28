@@ -66,7 +66,7 @@ func (s *Service) passwordCmd() *cobra.Command {
 				results[i] = Result{
 					ServiceName: pair.GetServiceName(),
 					Login:       pair.GetLogin(),
-					Password:    password,
+					Password:    string(password),
 					Description: pair.GetDescription(),
 				}
 			}

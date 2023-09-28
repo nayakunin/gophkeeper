@@ -43,7 +43,7 @@ message RegisterUserResponse {
 // Auth-related requests and responses
 message AuthenticateUserRequest {
   string username = 1;
-  string password = 2;
+  bytes password = 2;
 }
 
 message AuthenticateUserResponse {
@@ -55,13 +55,13 @@ message AuthenticateUserResponse {
 message AddLoginPasswordPairRequest {
   string service_name = 1;
   string login = 2;
-  string encrypted_password = 3;
+  bytes encrypted_password = 3;
   string description = 4;
 }
 
 message AddTextDataRequest {
   string description = 1;
-  string encrypted_text = 2;
+  bytes encrypted_text = 2;
 }
 
 message AddBinaryDataRequest {
@@ -71,9 +71,9 @@ message AddBinaryDataRequest {
 
 message AddBankCardDetailRequest {
   string card_name = 1;
-  string encrypted_card_number = 2;
-  string encrypted_expiry_date = 3;
-  string encrypted_cvc = 4;
+  bytes encrypted_card_number = 2;
+  bytes encrypted_expiry_date = 3;
+  bytes encrypted_cvc = 4;
   string description = 5;
 }
 
@@ -84,7 +84,7 @@ message GetLoginPasswordPairsRequest {
 message LoginPasswordPair {
   int64 id = 1;
   string login = 2;
-  string encrypted_password = 3;
+  bytes encrypted_password = 3;
   string description = 4;
   string service_name = 5;
 }
@@ -95,7 +95,7 @@ message GetLoginPasswordPairsResponse {
 
 message GetTextDataResponseItem {
   int64 id = 1;
-  string encrypted_text = 2;
+  bytes encrypted_text = 2;
   string description = 3;
 }
 
@@ -116,9 +116,9 @@ message GetBankCardDetailsRequest {
 message BankCardDetail {
   int64 id = 1;
   string card_name = 2;
-  string encrypted_card_number = 3;
-  string encrypted_expiry_date = 4;
-  string encrypted_cvc = 5;
+  bytes encrypted_card_number = 3;
+  bytes encrypted_expiry_date = 4;
+  bytes encrypted_cvc = 5;
   string description = 6;
 }
 

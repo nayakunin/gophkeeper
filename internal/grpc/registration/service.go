@@ -5,11 +5,11 @@ import (
 )
 
 type Storage interface {
-	CreateUser(username, passwordHash, encryptedMasterKey string) (int64, error)
+	CreateUser(username string, passwordHash, encryptedMasterKey []byte) (int64, error)
 }
 
 type Encryption interface {
-	Encrypt(text string, key []byte) (string, error)
+	Encrypt(text, key []byte) ([]byte, error)
 }
 
 // Service is a struct of the grpc.
