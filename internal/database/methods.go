@@ -43,8 +43,30 @@ func (s Storage) GetUser(username string) (*User, error) {
 }
 
 func (s Storage) GetBinaryData(userID int64) ([]BinaryData, error) {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
+	defer cancel()
+
+	conn, err := s.Pool.Acquire(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("could not acquire connection: %w", err)
+	}
+	defer conn.Release()
+
+	rows, err := conn.Query(ctx, `SELECT id, user_id, encrypted_data, description FROM binary_data WHERE user_id = $1`, userID)
+	if err != nil {
+		return nil, fmt.Errorf("could not select binary data: %w", err)
+	}
+
+	var binaryData []BinaryData
+	for rows.Next() {
+		var data BinaryData
+		if err = rows.Scan(&data.ID, &data.UserID, &data.EncryptedData, &data.Description); err != nil {
+			return nil, fmt.Errorf("could not scan binary data: %w", err)
+		}
+		binaryData = append(binaryData, data)
+	}
+
+	return binaryData, nil
 }
 
 func (s Storage) GetTextData(userID int64) ([]TextData, error) {
@@ -165,8 +187,21 @@ func (s Storage) AddBankCardDetails(userID int64, cardName string, encryptedCard
 }
 
 func (s Storage) AddBinaryData(userID int64, binary []byte, description string) error {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
+	defer cancel()
+
+	conn, err := s.Pool.Acquire(ctx)
+	if err != nil {
+		return fmt.Errorf("could not acquire connection: %w", err)
+	}
+	defer conn.Release()
+
+	_, err = conn.Exec(ctx, `INSERT INTO binary_data (user_id, encrypted_data, description) VALUES ($1, $2, $3)`, userID, binary, description)
+	if err != nil {
+		return fmt.Errorf("could not insert binary data: %w", err)
+	}
+
+	return nil
 }
 
 func (s Storage) AddTextData(userID int64, text []byte, description string) error {

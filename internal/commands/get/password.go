@@ -40,7 +40,6 @@ func (s *Service) passwordCmd() *cobra.Command {
 			defer conn.Close()
 
 			client := api.NewDataServiceClient(conn)
-
 			md := utils.GetRequestMetadata(token)
 			ctx := metadata.NewOutgoingContext(context.Background(), md)
 			response, err := client.GetLoginPasswordPairs(ctx, &api.GetLoginPasswordPairsRequest{
@@ -62,7 +61,6 @@ func (s *Service) passwordCmd() *cobra.Command {
 				if err != nil {
 					return fmt.Errorf("could not decrypt password: %w", err)
 				}
-
 				results[i] = Result{
 					ServiceName: pair.GetServiceName(),
 					Login:       pair.GetLogin(),

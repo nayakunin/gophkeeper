@@ -103,10 +103,14 @@ message GetTextDataResponse {
   repeated GetTextDataResponseItem text_data = 1;
 }
 
-message GetBinaryDataResponse {
+message GetBinaryDataResponseItem {
   int64 id = 1;
   bytes encrypted_data = 2;
   string description = 3;
+}
+
+message GetBinaryDataResponse {
+  repeated GetBinaryDataResponseItem binary_data = 1;
 }
 
 message GetBankCardDetailsRequest {
