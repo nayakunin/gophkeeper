@@ -10,7 +10,7 @@ import (
 
 // AuthenticateUser authenticates a user.
 func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUserRequest) (*api.AuthenticateUserResponse, error) {
-	user, err := s.storage.GetUser(in.Username)
+	user, err := s.storage.GetUser(ctx, in.Username)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get user: %w", err)
 	}

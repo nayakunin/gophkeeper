@@ -20,7 +20,7 @@ func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest)
 		return nil, fmt.Errorf("unable to encrypt master key: %w", err)
 	}
 
-	userID, err := s.storage.CreateUser(in.Username, passwordHash, encryptedMasterKey)
+	userID, err := s.storage.CreateUser(ctx, in.Username, passwordHash, encryptedMasterKey)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create user: %w", err)
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/internal/services/auth"
+	"github.com/nayakunin/gophkeeper/pkg/utils/authcommon"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,12 +12,12 @@ import (
 
 // GetBinaryData returns binary data.
 func (s *Service) GetBinaryData(ctx context.Context, in *api.Empty) (*api.GetBinaryDataResponse, error) {
-	userID, ok := ctx.Value(auth.UserIDKey).(int64)
+	userID, ok := ctx.Value(authcommon.UserIDKey).(int64)
 	if !ok {
 		return nil, status.Errorf(codes.Internal, "userID not found in context")
 	}
 
-	data, err := s.storage.GetBinaryData(userID)
+	data, err := s.storage.GetBinaryData(ctx, userID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get binary data: %v", err)
 	}

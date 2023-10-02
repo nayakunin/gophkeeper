@@ -31,9 +31,12 @@ func main() {
 		return api.RegistrationService_ServiceDesc.ServiceName != callMeta.Service && api.AuthService_ServiceDesc.ServiceName != callMeta.Service
 	}
 
+	authService := auth.NewService()
+	middlewaresService := middlewares.NewService(authService)
+
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			selector.UnaryServerInterceptor(grpcAuth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButAuth)),
+			selector.UnaryServerInterceptor(grpcAuth.UnaryServerInterceptor(middlewaresService.Auth), selector.MatchFunc(allButAuth)),
 		))
 
 	ctx, cancel := context.WithTimeout(context.Background(), constants.DBTimeout)
@@ -45,7 +48,6 @@ func main() {
 	}
 
 	encryptionService := encryption.NewService()
-	authService := auth.NewService()
 
 	api.RegisterRegistrationServiceServer(s, registrationGrpcService.NewService(storage, encryptionService, authService))
 	api.RegisterAuthServiceServer(s, authGrpcService.NewService(storage, encryptionService, authService))

@@ -5,6 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/nayakunin/gophkeeper/constants"
+	"github.com/nayakunin/gophkeeper/pkg/utils/authcommon"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,22 +15,9 @@ func NewService() *Service {
 	return &Service{}
 }
 
-type tokenInfoKey struct {
-	name string
-}
-
-// UserIDKey is the key for the user id in the context.
-var UserIDKey = &tokenInfoKey{"userID"}
-
-// CustomClaims is a struct for JWT token claims.
-type CustomClaims struct {
-	UserID int64 `json:"user_id"`
-	jwt.RegisteredClaims
-}
-
 // GenerateJWT generates JWT token.
 func (s *Service) GenerateJWT(userID int64) (string, error) {
-	claims := CustomClaims{
+	claims := authcommon.CustomClaims{
 		UserID: userID,
 	}
 
@@ -54,8 +42,8 @@ func (s *Service) HashPassword(password string) ([]byte, error) {
 }
 
 // ParseToken validates and parses the JWT token
-func (s *Service) ParseToken(tokenStr string) (*CustomClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (s *Service) ParseToken(tokenStr string) (*authcommon.CustomClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &authcommon.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(constants.SecretKey), nil
 	})
 
@@ -63,7 +51,7 @@ func (s *Service) ParseToken(tokenStr string) (*CustomClaims, error) {
 		return nil, err
 	}
 
-	claims, ok := token.Claims.(*CustomClaims)
+	claims, ok := token.Claims.(*authcommon.CustomClaims)
 	if !ok || !token.Valid {
 		return nil, errors.New("invalid token")
 	}
@@ -72,6 +60,6 @@ func (s *Service) ParseToken(tokenStr string) (*CustomClaims, error) {
 }
 
 // UserClaimFromToken extracts user identifier from token claims
-func (s *Service) UserClaimFromToken(claims *CustomClaims) int64 {
+func (s *Service) UserClaimFromToken(claims *authcommon.CustomClaims) int64 {
 	return claims.UserID
 }

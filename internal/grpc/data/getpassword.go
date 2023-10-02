@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/internal/services/auth"
+	"github.com/nayakunin/gophkeeper/pkg/utils/authcommon"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,12 +12,12 @@ import (
 
 // GetLoginPasswordPairs returns login password pairs.
 func (s *Service) GetLoginPasswordPairs(ctx context.Context, in *api.GetLoginPasswordPairsRequest) (*api.GetLoginPasswordPairsResponse, error) {
-	userID, ok := ctx.Value(auth.UserIDKey).(int64)
+	userID, ok := ctx.Value(authcommon.UserIDKey).(int64)
 	if !ok {
 		return nil, status.Errorf(codes.Internal, "userID not found in context")
 	}
 
-	pairs, err := s.storage.GetLoginPasswordPairs(userID, in.GetServiceName())
+	pairs, err := s.storage.GetLoginPasswordPairs(ctx, userID, in.GetServiceName())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get login password pairs: %v", err)
 	}
