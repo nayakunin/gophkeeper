@@ -40,6 +40,7 @@ func (s *Service) GetBankCardDetails(ctx context.Context, in *api.GetBankCardDet
 		}
 
 		result[i] = &api.BankCardDetail{
+			Id:                  int64(card.ID),
 			CardName:            card.CardName,
 			EncryptedCardNumber: clientEncryptedCardNumber,
 			EncryptedExpiryDate: clientEncryptedExpiryDate,

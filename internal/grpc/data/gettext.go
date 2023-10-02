@@ -30,6 +30,7 @@ func (s *Service) GetTextData(ctx context.Context, in *api.Empty) (*api.GetTextD
 		}
 
 		result[i] = &api.GetTextDataResponseItem{
+			Id:            int64(data.ID),
 			Description:   data.Description,
 			EncryptedText: clientEncryptedText,
 		}
