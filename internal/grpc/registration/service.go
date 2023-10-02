@@ -2,6 +2,8 @@
 package registration
 
 import (
+	"context"
+
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
@@ -13,7 +15,7 @@ type AuthService interface {
 
 // Storage is an interface for storing credentials.
 type Storage interface {
-	CreateUser(username string, passwordHash, encryptedMasterKey []byte) (int64, error)
+	CreateUser(ctx context.Context, username string, passwordHash, encryptedMasterKey []byte) (int64, error)
 }
 
 // Encryption is an interface for encrypting and decrypting data.

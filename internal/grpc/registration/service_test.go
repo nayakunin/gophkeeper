@@ -112,7 +112,7 @@ func TestService_RegisterUser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockStorage := mocks.NewMockStorage(ctrl)
 			if tc.mockStorageReply != nil {
-				mockStorage.EXPECT().CreateUser(gomock.Any(), gomock.Any(), gomock.Any()).Return(tc.mockStorageReply.userID, tc.mockStorageReply.err)
+				mockStorage.EXPECT().CreateUser(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(tc.mockStorageReply.userID, tc.mockStorageReply.err)
 			}
 			mockEncryption := mocks.NewMockEncryption(ctrl)
 			if tc.mockEncryptionReply != nil {

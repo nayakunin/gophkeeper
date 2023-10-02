@@ -9,6 +9,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -91,18 +92,18 @@ func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockStorage) CreateUser(username string, passwordHash, encryptedMasterKey []byte) (int64, error) {
+func (m *MockStorage) CreateUser(ctx context.Context, username string, passwordHash, encryptedMasterKey []byte) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateUser", username, passwordHash, encryptedMasterKey)
+	ret := m.ctrl.Call(m, "CreateUser", ctx, username, passwordHash, encryptedMasterKey)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateUser indicates an expected call of CreateUser.
-func (mr *MockStorageMockRecorder) CreateUser(username, passwordHash, encryptedMasterKey any) *gomock.Call {
+func (mr *MockStorageMockRecorder) CreateUser(ctx, username, passwordHash, encryptedMasterKey any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockStorage)(nil).CreateUser), username, passwordHash, encryptedMasterKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockStorage)(nil).CreateUser), ctx, username, passwordHash, encryptedMasterKey)
 }
 
 // MockEncryption is a mock of Encryption interface.

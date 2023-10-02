@@ -1,6 +1,8 @@
 package credentials
 
 import (
+	"fmt"
+
 	"github.com/99designs/keyring"
 )
 
@@ -10,7 +12,7 @@ type Service struct {
 }
 
 // NewService returns a new Service.
-func NewService() *Service {
+func NewService() (*Service, error) {
 	ring, err := keyring.Open(keyring.Config{
 		ServiceName:                    "gophkeeper",
 		KeychainName:                   "gophkeeper",
@@ -18,12 +20,12 @@ func NewService() *Service {
 		KeychainAccessibleWhenUnlocked: true,
 	})
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to open keyring: %v", err)
 	}
 
 	return &Service{
 		ring: ring,
-	}
+	}, nil
 }
 
 // Set sets a value for a key.

@@ -23,7 +23,8 @@ import (
 func main() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", constants.GrpcPort))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("failed to listen", "err", err)
+		panic(err)
 	}
 
 	allButAuth := func(ctx context.Context, callMeta interceptors.CallMeta) bool {
@@ -35,9 +36,11 @@ func main() {
 			selector.UnaryServerInterceptor(grpcAuth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButAuth)),
 		))
 
-	storage, err := database.NewStorage("postgresql://localhost:5432/postgres")
+	ctx, cancel := context.WithTimeout(context.Background(), constants.DBTimeout)
+	defer cancel()
+	storage, err := database.NewStorage(ctx, "postgresql://localhost:5432/postgres")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("failed to connect to database", "err", err)
 		panic(err)
 	}
 

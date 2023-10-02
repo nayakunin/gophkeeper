@@ -1,5 +1,7 @@
 package constants
 
+import "time"
+
 // GrpcPort is the port on which the gRPC server will listen
 const GrpcPort = "8081"
 
@@ -11,3 +13,6 @@ const SecretKey = "secret"
 
 // EncryptionKey is the encryption key used to encrypt/decrypt the master key
 const EncryptionKey = "B3L1lIoZR9G5hoXt6kYmtqEmWJ3tUYQZ"
+
+// DBTimeout is a timeout for db creation
+const DBTimeout = 5 * time.Second

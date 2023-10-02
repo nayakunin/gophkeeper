@@ -1,13 +1,15 @@
 package auth
 
 import (
+	"context"
+
 	"github.com/nayakunin/gophkeeper/internal/database"
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
 // Storage is an interface for storing credentials.
 type Storage interface {
-	GetUser(username string) (*database.User, error)
+	GetUser(ctx context.Context, username string) (*database.User, error)
 }
 
 // Encryption is an interface for encrypting and decrypting data.

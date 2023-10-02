@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	credentialsService := credentials.NewService()
+	credentialsService, err := credentials.NewService()
+	if err != nil {
+		panic(err)
+	}
+
 	localStorageService := localstorage.NewStorage(credentialsService)
 	encryptionService := encryption.NewService()
 
