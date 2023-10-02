@@ -1,7 +1,6 @@
 package get
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -12,6 +11,27 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+type binaryResult struct {
+	Data        []byte `json:"data"`
+	Description string `json:"description"`
+}
+
+func (s *Service) makeBinaryResponse(response *api.GetBinaryDataResponse, encryptionKey []byte) ([]binaryResult, error) {
+	results := make([]binaryResult, len(response.GetBinaryData()))
+	for i, pair := range response.GetBinaryData() {
+		data, err := s.encryption.Decrypt(pair.GetEncryptedData(), encryptionKey)
+		if err != nil {
+			return nil, fmt.Errorf("could not decrypt data: %w", err)
+		}
+		results[i] = binaryResult{
+			Data:        data,
+			Description: pair.GetDescription(),
+		}
+	}
+
+	return results, nil
+}
+
 func (s *Service) binaryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "binary",
@@ -20,9 +40,6 @@ func (s *Service) binaryCmd() *cobra.Command {
 			token, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get token: %w", err)
-			}
-			if token == "" {
-				return fmt.Errorf("please login first")
 			}
 
 			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
@@ -33,26 +50,15 @@ func (s *Service) binaryCmd() *cobra.Command {
 
 			client := api.NewDataServiceClient(conn)
 			md := utils.GetRequestMetadata(token)
-			ctx := metadata.NewOutgoingContext(context.Background(), md)
+			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
 			response, err := client.GetBinaryData(ctx, &api.Empty{})
 			if err != nil {
 				return fmt.Errorf("could not get binary data: %w", err)
 			}
 
-			type Result struct {
-				Data        []byte `json:"data"`
-				Description string `json:"description"`
-			}
-			results := make([]Result, len(response.GetBinaryData()))
-			for i, pair := range response.GetBinaryData() {
-				data, err := s.encryption.Decrypt(pair.GetEncryptedData(), encryptionKey)
-				if err != nil {
-					return fmt.Errorf("could not decrypt data: %w", err)
-				}
-				results[i] = Result{
-					Data:        data,
-					Description: pair.GetDescription(),
-				}
+			results, err := s.makeBinaryResponse(response, encryptionKey)
+			if err != nil {
+				return fmt.Errorf("could not make binary response: %w", err)
 			}
 
 			return utils.PrintJSON(results)

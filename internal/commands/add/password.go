@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -11,6 +10,62 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
+
+type parsePasswordResult struct {
+	ServiceName string
+	Login       string
+	Password    string
+	Description string
+}
+
+func (s *Service) parsePasswordRequest(cmd *cobra.Command) (*parsePasswordResult, error) {
+	serviceName, err := cmd.Flags().GetString("service")
+	if err != nil {
+		return nil, fmt.Errorf("could not get service name: %w", err)
+	}
+	if serviceName == "" {
+		return nil, fmt.Errorf("please provide a service name")
+	}
+	login, err := cmd.Flags().GetString("login")
+	if err != nil {
+		return nil, fmt.Errorf("could not get login: %w", err)
+	}
+	if login == "" {
+		return nil, fmt.Errorf("please provide a login")
+	}
+	password, err := cmd.Flags().GetString("password")
+	if err != nil {
+		return nil, fmt.Errorf("could not get password: %w", err)
+	}
+	if password == "" {
+		return nil, fmt.Errorf("please provide a password")
+	}
+	description, err := cmd.Flags().GetString("description")
+	if err != nil {
+		return nil, fmt.Errorf("could not get description: %w", err)
+	}
+
+	return &parsePasswordResult{
+		ServiceName: serviceName,
+		Login:       login,
+		Password:    password,
+		Description: description,
+	}, nil
+}
+
+func (s *Service) preparePasswordRequest(result *parsePasswordResult, encryptionKey []byte) (*api.AddLoginPasswordPairRequest, error) {
+	encryptedPassword, err := s.encryption.Encrypt([]byte(result.Password), encryptionKey)
+	if err != nil {
+		return nil, fmt.Errorf("could not encrypt password: %w", err)
+	}
+
+	return &api.AddLoginPasswordPairRequest{
+		ServiceName:       result.ServiceName,
+		Login:             result.Login,
+		EncryptedPassword: encryptedPassword,
+		Description:       result.Description,
+	}, nil
+}
 
 func (s *Service) passwordCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -22,26 +77,14 @@ func (s *Service) passwordCmd() *cobra.Command {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
 
-			serviceName, err := cmd.Flags().GetString("service")
+			tmpResult, err := s.parsePasswordRequest(cmd)
 			if err != nil {
-				return fmt.Errorf("could not get service name: %w", err)
-			}
-			login, err := cmd.Flags().GetString("login")
-			if err != nil {
-				return fmt.Errorf("could not get login: %w", err)
-			}
-			password, err := cmd.Flags().GetString("password")
-			if err != nil {
-				return fmt.Errorf("could not get password: %w", err)
-			}
-			description, err := cmd.Flags().GetString("description")
-			if err != nil {
-				return fmt.Errorf("could not get description: %w", err)
+				return fmt.Errorf("could not parse request: %w", err)
 			}
 
-			encryptedPassword, err := s.encryption.Encrypt([]byte(password), encryptionKey)
+			request, err := s.preparePasswordRequest(tmpResult, encryptionKey)
 			if err != nil {
-				return fmt.Errorf("could not encrypt password: %w", err)
+				return fmt.Errorf("could not prepare request: %w", err)
 			}
 
 			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
@@ -52,13 +95,8 @@ func (s *Service) passwordCmd() *cobra.Command {
 
 			client := api.NewDataServiceClient(conn)
 			md := utils.GetRequestMetadata(token)
-			ctx := metadata.NewOutgoingContext(context.Background(), md)
-			_, err = client.AddLoginPasswordPair(ctx, &api.AddLoginPasswordPairRequest{
-				ServiceName:       serviceName,
-				Login:             login,
-				EncryptedPassword: encryptedPassword,
-				Description:       description,
-			})
+			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
+			_, err = client.AddLoginPasswordPair(ctx, request)
 			if err != nil {
 				return fmt.Errorf("could not add password: %w", err)
 			}

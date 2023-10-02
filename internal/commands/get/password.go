@@ -1,7 +1,6 @@
 package get
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -12,6 +11,45 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+func (s *Service) parsePasswordRequest(cmd *cobra.Command) (*api.GetLoginPasswordPairsRequest, error) {
+	serviceName, err := cmd.Flags().GetString("service")
+	if err != nil {
+		return nil, fmt.Errorf("could not get service name: %w", err)
+	}
+	if serviceName == "" {
+		return nil, fmt.Errorf("please provide a service name")
+	}
+
+	return &api.GetLoginPasswordPairsRequest{
+		ServiceName: serviceName,
+	}, nil
+}
+
+type passwordResult struct {
+	ServiceName string `json:"service_name"`
+	Login       string `json:"login"`
+	Password    string `json:"password"`
+	Description string `json:"description"`
+}
+
+func (s *Service) makePasswordResponse(response *api.GetLoginPasswordPairsResponse, encryptionKey []byte) ([]passwordResult, error) {
+	results := make([]passwordResult, len(response.GetLoginPasswordPairs()))
+	for i, pair := range response.GetLoginPasswordPairs() {
+		password, err := s.encryption.Decrypt(pair.GetEncryptedPassword(), encryptionKey)
+		if err != nil {
+			return nil, fmt.Errorf("could not decrypt password: %w", err)
+		}
+		results[i] = passwordResult{
+			ServiceName: pair.GetServiceName(),
+			Login:       pair.GetLogin(),
+			Password:    string(password),
+			Description: pair.GetDescription(),
+		}
+	}
+
+	return results, nil
+}
+
 func (s *Service) passwordCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "password",
@@ -21,16 +59,10 @@ func (s *Service) passwordCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get token: %w", err)
 			}
-			if token == "" {
-				return fmt.Errorf("please login first")
-			}
 
-			serviceName, err := cmd.Flags().GetString("service")
+			request, err := s.parsePasswordRequest(cmd)
 			if err != nil {
-				return fmt.Errorf("could not get service name: %w", err)
-			}
-			if serviceName == "" {
-				return fmt.Errorf("please provide a service name")
+				return fmt.Errorf("could not parse request: %w", err)
 			}
 
 			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
@@ -41,32 +73,15 @@ func (s *Service) passwordCmd() *cobra.Command {
 
 			client := api.NewDataServiceClient(conn)
 			md := utils.GetRequestMetadata(token)
-			ctx := metadata.NewOutgoingContext(context.Background(), md)
-			response, err := client.GetLoginPasswordPairs(ctx, &api.GetLoginPasswordPairsRequest{
-				ServiceName: serviceName,
-			})
+			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
+			response, err := client.GetLoginPasswordPairs(ctx, request)
 			if err != nil {
 				return fmt.Errorf("could not get password: %w", err)
 			}
 
-			type Result struct {
-				ServiceName string `json:"service_name"`
-				Login       string `json:"login"`
-				Password    string `json:"password"`
-				Description string `json:"description"`
-			}
-			results := make([]Result, len(response.GetLoginPasswordPairs()))
-			for i, pair := range response.GetLoginPasswordPairs() {
-				password, err := s.encryption.Decrypt(pair.GetEncryptedPassword(), encryptionKey)
-				if err != nil {
-					return fmt.Errorf("could not decrypt password: %w", err)
-				}
-				results[i] = Result{
-					ServiceName: pair.GetServiceName(),
-					Login:       pair.GetLogin(),
-					Password:    string(password),
-					Description: pair.GetDescription(),
-				}
+			results, err := s.makePasswordResponse(response, encryptionKey)
+			if err != nil {
+				return fmt.Errorf("could not make password response: %w", err)
 			}
 
 			return utils.PrintJSON(results)

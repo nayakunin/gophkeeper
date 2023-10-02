@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -32,7 +31,7 @@ func (s *Service) RegisterCmd() *cobra.Command {
 				return fmt.Errorf("could not generate encryption key: %w", err)
 			}
 
-			response, err := client.RegisterUser(context.Background(), &api.RegisterUserRequest{
+			response, err := client.RegisterUser(cmd.Context(), &api.RegisterUserRequest{
 				Username: username,
 				Password: password,
 			})

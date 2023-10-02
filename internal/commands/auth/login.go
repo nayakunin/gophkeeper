@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
@@ -26,7 +25,7 @@ func (s *Service) LoginCmd() *cobra.Command {
 
 			client := api.NewAuthServiceClient(conn)
 
-			response, err := client.AuthenticateUser(context.Background(), &api.AuthenticateUserRequest{
+			response, err := client.AuthenticateUser(cmd.Context(), &api.AuthenticateUserRequest{
 				Username: username,
 				Password: []byte(password),
 			})
