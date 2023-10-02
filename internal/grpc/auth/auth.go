@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/pkg/utils/auth"
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
@@ -16,11 +15,11 @@ func (s *Service) AuthenticateUser(ctx context.Context, in *api.AuthenticateUser
 		return nil, fmt.Errorf("unable to get user: %w", err)
 	}
 
-	if err := auth.ComparePassword(user.PasswordHash, in.Password); err != nil {
+	if err := s.auth.ComparePassword(user.PasswordHash, in.Password); err != nil {
 		return nil, fmt.Errorf("unable to compare password: %w", err)
 	}
 
-	jwtToken, err := auth.GenerateJWT(int64(user.ID))
+	jwtToken, err := s.auth.GenerateJWT(int64(user.ID))
 	if err != nil {
 		return nil, fmt.Errorf("unable to generate jwt: %w", err)
 	}

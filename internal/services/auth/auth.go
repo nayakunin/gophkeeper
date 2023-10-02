@@ -8,6 +8,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Service struct{}
+
+func NewService() *Service {
+	return &Service{}
+}
+
 type tokenInfoKey struct {
 	name string
 }
@@ -22,7 +28,7 @@ type CustomClaims struct {
 }
 
 // GenerateJWT generates JWT token.
-func GenerateJWT(userID int64) (string, error) {
+func (s *Service) GenerateJWT(userID int64) (string, error) {
 	claims := CustomClaims{
 		UserID: userID,
 	}
@@ -33,12 +39,12 @@ func GenerateJWT(userID int64) (string, error) {
 }
 
 // ComparePassword compares hash and password.
-func ComparePassword(hash, password []byte) error {
+func (s *Service) ComparePassword(hash, password []byte) error {
 	return bcrypt.CompareHashAndPassword(hash, password)
 }
 
 // HashPassword hashes password.
-func HashPassword(password string) ([]byte, error) {
+func (s *Service) HashPassword(password string) ([]byte, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		return nil, err
@@ -48,7 +54,7 @@ func HashPassword(password string) ([]byte, error) {
 }
 
 // ParseToken validates and parses the JWT token
-func ParseToken(tokenStr string) (*CustomClaims, error) {
+func (s *Service) ParseToken(tokenStr string) (*CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(constants.SecretKey), nil
 	})
@@ -66,6 +72,6 @@ func ParseToken(tokenStr string) (*CustomClaims, error) {
 }
 
 // UserClaimFromToken extracts user identifier from token claims
-func UserClaimFromToken(claims *CustomClaims) int64 {
+func (s *Service) UserClaimFromToken(claims *CustomClaims) int64 {
 	return claims.UserID
 }

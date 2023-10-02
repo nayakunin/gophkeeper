@@ -6,14 +6,15 @@ import (
 	"net"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
+	grpcAuth "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/selector"
 	"github.com/nayakunin/gophkeeper/constants"
 	"github.com/nayakunin/gophkeeper/internal/database"
-	authService "github.com/nayakunin/gophkeeper/internal/grpc/auth"
-	dataService "github.com/nayakunin/gophkeeper/internal/grpc/data"
-	registrationService "github.com/nayakunin/gophkeeper/internal/grpc/registration"
+	authGrpcService "github.com/nayakunin/gophkeeper/internal/grpc/auth"
+	dataGrpcService "github.com/nayakunin/gophkeeper/internal/grpc/data"
+	registrationGrpcService "github.com/nayakunin/gophkeeper/internal/grpc/registration"
 	"github.com/nayakunin/gophkeeper/internal/middlewares"
+	"github.com/nayakunin/gophkeeper/internal/services/auth"
 	"github.com/nayakunin/gophkeeper/internal/services/encryption"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"google.golang.org/grpc"
@@ -31,7 +32,7 @@ func main() {
 
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			selector.UnaryServerInterceptor(auth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButAuth)),
+			selector.UnaryServerInterceptor(grpcAuth.UnaryServerInterceptor(middlewares.Auth), selector.MatchFunc(allButAuth)),
 		))
 
 	storage, err := database.NewStorage("postgresql://localhost:5432/postgres")
@@ -41,10 +42,11 @@ func main() {
 	}
 
 	encryptionService := encryption.NewService()
+	authService := auth.NewService()
 
-	api.RegisterRegistrationServiceServer(s, registrationService.NewService(storage, encryptionService))
-	api.RegisterAuthServiceServer(s, authService.NewService(storage, encryptionService))
-	api.RegisterDataServiceServer(s, dataService.NewService(storage, encryptionService))
+	api.RegisterRegistrationServiceServer(s, registrationGrpcService.NewService(storage, encryptionService, authService))
+	api.RegisterAuthServiceServer(s, authGrpcService.NewService(storage, encryptionService, authService))
+	api.RegisterDataServiceServer(s, dataGrpcService.NewService(storage, encryptionService))
 
 	fmt.Println("starting gRPC server", "addr", constants.GrpcPort)
 	if err := s.Serve(lis); err != nil {

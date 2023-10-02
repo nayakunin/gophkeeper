@@ -5,13 +5,12 @@ import (
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/pkg/utils/auth"
 	api "github.com/nayakunin/gophkeeper/proto"
 )
 
 // RegisterUser registers user.
 func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.RegisterUserResponse, error) {
-	passwordHash, err := auth.HashPassword(in.Password)
+	passwordHash, err := s.auth.HashPassword(in.Password)
 	if err != nil {
 		return nil, fmt.Errorf("unable to hash password: %w", err)
 	}
@@ -26,7 +25,7 @@ func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest)
 		return nil, fmt.Errorf("unable to create user: %w", err)
 	}
 
-	jwtToken, err := auth.GenerateJWT(userID)
+	jwtToken, err := s.auth.GenerateJWT(userID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to generate jwt: %w", err)
 	}

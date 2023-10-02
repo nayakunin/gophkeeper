@@ -23,6 +23,9 @@ type Encryption interface {
 	Decrypt(text, key []byte) ([]byte, error)
 }
 
+type AuthService interface {
+}
+
 // Service is a struct of the grpc.
 type Service struct {
 	api.UnimplementedDataServiceServer

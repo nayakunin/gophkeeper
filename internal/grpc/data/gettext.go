@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/nayakunin/gophkeeper/constants"
-	"github.com/nayakunin/gophkeeper/pkg/utils/auth"
+	"github.com/nayakunin/gophkeeper/internal/services/auth"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
