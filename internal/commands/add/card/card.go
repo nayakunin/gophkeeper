@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func (s *Service) GetCardCmd() *cobra.Command {
+func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "card",
 		Short: "Add a new credit card",

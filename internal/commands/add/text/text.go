@@ -1,9 +1,10 @@
-package add
+package text
 
 import (
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/constants"
+	"github.com/nayakunin/gophkeeper/internal/commands/add/text/input"
 	"github.com/nayakunin/gophkeeper/pkg/utils"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
@@ -11,43 +12,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-type parseTextResult struct {
-	Text        string
-	Description string
-}
-
-func (s *Service) parseTextRequest(cmd *cobra.Command) (*parseTextResult, error) {
-	text, err := cmd.Flags().GetString("text")
-	if err != nil {
-		return nil, fmt.Errorf("could not get text: %w", err)
-	}
-	if text == "" {
-		return nil, fmt.Errorf("please provide a text")
-	}
-	description, err := cmd.Flags().GetString("description")
-	if err != nil {
-		return nil, fmt.Errorf("could not get description: %w", err)
-	}
-
-	return &parseTextResult{
-		Text:        text,
-		Description: description,
-	}, nil
-}
-
-func (s *Service) prepareTextRequest(result *parseTextResult, encryptionKey []byte) (*api.AddTextDataRequest, error) {
-	encryptedText, err := s.encryption.Encrypt([]byte(result.Text), encryptionKey)
-	if err != nil {
-		return nil, fmt.Errorf("could not encrypt text: %w", err)
-	}
-
-	return &api.AddTextDataRequest{
-		EncryptedText: encryptedText,
-		Description:   result.Description,
-	}, nil
-}
-
-func (s *Service) textCmd() *cobra.Command {
+func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "text",
 		Short: "Add a new text data",
@@ -57,12 +22,12 @@ func (s *Service) textCmd() *cobra.Command {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
 
-			tmpResult, err := s.parseTextRequest(cmd)
+			tmpResult, err := input.ParseTextRequest(cmd)
 			if err != nil {
 				return fmt.Errorf("could not parse request: %w", err)
 			}
 
-			request, err := s.prepareTextRequest(tmpResult, encryptionKey)
+			request, err := s.apiPreparer.PrepareTextRequest(tmpResult, encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not prepare request: %w", err)
 			}

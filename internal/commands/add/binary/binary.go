@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func (s *Service) GetBinaryCmd() *cobra.Command {
+func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "binary",
 		Short: "Add a new binary record",
