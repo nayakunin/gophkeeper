@@ -11,7 +11,7 @@ import (
 )
 
 // GetTextData returns text data.
-func (s *Service) GetTextData(ctx context.Context, in *api.Empty) (*api.GetTextDataResponse, error) {
+func (s *Service) GetTextData(ctx context.Context, _ *api.Empty) (*api.GetTextDataResponse, error) {
 	userID, ok := ctx.Value(authcommon.UserIDKey).(int64)
 	if !ok {
 		return nil, status.Errorf(codes.Internal, "userID not found in context")

@@ -1,3 +1,4 @@
+//go:generate mockgen -source=add.go -destination=mocks/service.go -package=mocks
 package add
 
 import "github.com/spf13/cobra"

@@ -17,7 +17,7 @@ type parseBinaryResult struct {
 	Description string
 }
 
-func (s *Service) parseBinaryRequest(cmd *cobra.Command, encryptionKey []byte) (*parseBinaryResult, error) {
+func (s *Service) parseBinaryRequest(cmd *cobra.Command) (*parseBinaryResult, error) {
 	filepath, err := cmd.Flags().GetString("filepath")
 	if err != nil {
 		return nil, fmt.Errorf("could not get filepath: %w", err)
@@ -33,8 +33,10 @@ func (s *Service) parseBinaryRequest(cmd *cobra.Command, encryptionKey []byte) (
 	}, nil
 }
 
+var osReadFile = os.ReadFile
+
 func (s *Service) prepareBinaryRequest(result *parseBinaryResult, encryptionKey []byte) (*api.AddBinaryDataRequest, error) {
-	file, err := os.ReadFile(result.Filepath)
+	file, err := osReadFile(result.Filepath)
 	if err != nil {
 		return nil, fmt.Errorf("could not read file: %w", err)
 	}
@@ -60,7 +62,7 @@ func (s *Service) binaryCmd() *cobra.Command {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
 
-			tmpResult, err := s.parseBinaryRequest(cmd, encryptionKey)
+			tmpResult, err := s.parseBinaryRequest(cmd)
 			if err != nil {
 				return fmt.Errorf("could not parse request: %w", err)
 			}

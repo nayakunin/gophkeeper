@@ -1,3 +1,4 @@
+//go:generate mockgen -source=service.go -destination=mocks/service.go -package=mocks
 package middlewares
 
 import "github.com/nayakunin/gophkeeper/pkg/utils/authcommon"
