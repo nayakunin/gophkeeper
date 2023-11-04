@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary/input"
 	"github.com/nayakunin/gophkeeper/proto"
 )
@@ -16,7 +15,7 @@ type Encryption interface {
 }
 
 type Service struct {
-	encryption add.Encryption
+	encryption Encryption
 }
 
 func NewService(encryption Encryption) *Service {
