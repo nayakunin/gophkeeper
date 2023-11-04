@@ -4,14 +4,14 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/spf13/cobra"
 )
 
 func TestService_textCmd(t *testing.T) {
 	type fields struct {
-		credentialsService add.CredentialsService
-		encryption         add.Encryption
+		credentialsService CredentialsService
+		encryption         Encryption
+		apiPreparer        Api
 	}
 	tests := []struct {
 		name   string
@@ -22,11 +22,12 @@ func TestService_textCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &add.Service{
+			s := &Service{
 				credentialsService: tt.fields.credentialsService,
 				encryption:         tt.fields.encryption,
+				apiPreparer:        tt.fields.apiPreparer,
 			}
-			if got := s.textCmd(); !reflect.DeepEqual(got, tt.want) {
+			if got := s.GetCmd(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("textCmd() = %v, want %v", got, tt.want)
 			}
 		})

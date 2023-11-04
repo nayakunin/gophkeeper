@@ -27,7 +27,7 @@ func TestService_passwordCmd(t *testing.T) {
 				encryption:         tt.fields.encryption,
 				apiPreparer:        tt.fields.apiPreparer,
 			}
-			if got := s.GetPasswordCmd(); !reflect.DeepEqual(got, tt.want) {
+			if got := s.GetCmd(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("passwordCmd() = %v, want %v", got, tt.want)
 			}
 		})

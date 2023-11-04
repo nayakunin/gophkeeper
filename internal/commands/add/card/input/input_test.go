@@ -4,21 +4,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/spf13/cobra"
 )
 
 func Test_ParseCardRequest(t *testing.T) {
-	type fields struct {
-		credentialsService add.CredentialsService
-		encryption         add.Encryption
-	}
 	type args struct {
 		cmd *cobra.Command
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
 		want    *ParseCardResult
 		wantErr bool

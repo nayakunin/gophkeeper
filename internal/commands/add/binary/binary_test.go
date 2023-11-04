@@ -107,7 +107,7 @@ func TestService_binaryCmd(t *testing.T) {
 				apiPreparer:        a,
 			}
 
-			binaryCmd := s.GetBinaryCmd()
+			binaryCmd := s.GetCmd()
 			assert.NoError(t, err)
 
 			if !tt.want(t, binaryCmd.RunE(tt.args.cmd, []string{}), fmt.Sprintf("binaryCmd(%v)", tt.args.cmd)) {
