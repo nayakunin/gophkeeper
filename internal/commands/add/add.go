@@ -4,6 +4,7 @@ package add
 import (
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/card"
+	"github.com/nayakunin/gophkeeper/internal/commands/add/password"
 	"github.com/spf13/cobra"
 )
 
@@ -40,8 +41,9 @@ func (s *Service) Handle() *cobra.Command {
 
 	binaryService := binary.NewService(s.credentialsService, s.encryption)
 	cardService := card.NewService(s.credentialsService, s.encryption)
+	passwordService := password.NewService(s.credentialsService, s.encryption)
 
-	cmd.AddCommand(s.passwordCmd())
+	cmd.AddCommand(passwordService.GetPasswordCmd())
 	cmd.AddCommand(binaryService.GetBinaryCmd())
 	cmd.AddCommand(s.textCmd())
 	cmd.AddCommand(cardService.GetCardCmd())
