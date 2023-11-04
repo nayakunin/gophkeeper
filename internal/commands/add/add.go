@@ -1,7 +1,10 @@
 //go:generate mockgen -source=add.go -destination=mocks/service.go -package=mocks
 package add
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/nayakunin/gophkeeper/internal/commands/add/binary"
+	"github.com/spf13/cobra"
+)
 
 // CredentialsService is an interface for getting credentials.
 type CredentialsService interface {
@@ -34,8 +37,10 @@ func (s *Service) Handle() *cobra.Command {
 		Short: "Add a new entry",
 	}
 
+	binaryService := binary.NewService(s.credentialsService, s.encryption)
+
 	cmd.AddCommand(s.passwordCmd())
-	cmd.AddCommand(s.binaryCmd())
+	cmd.AddCommand(binaryService.GetBinaryCmd())
 	cmd.AddCommand(s.textCmd())
 	cmd.AddCommand(s.cardCmd())
 

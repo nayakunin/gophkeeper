@@ -1,10 +1,10 @@
-package add
+package binary
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/nayakunin/gophkeeper/constants"
+	"github.com/nayakunin/gophkeeper/internal/commands/add/binary/input"
 	"github.com/nayakunin/gophkeeper/pkg/utils"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
@@ -12,47 +12,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-type parseBinaryResult struct {
-	Filepath    string
-	Description string
-}
-
-func (s *Service) parseBinaryRequest(cmd *cobra.Command) (*parseBinaryResult, error) {
-	filepath, err := cmd.Flags().GetString("filepath")
-	if err != nil {
-		return nil, fmt.Errorf("could not get filepath: %w", err)
-	}
-	description, err := cmd.Flags().GetString("description")
-	if err != nil {
-		return nil, fmt.Errorf("could not get description: %w", err)
-	}
-
-	return &parseBinaryResult{
-		Filepath:    filepath,
-		Description: description,
-	}, nil
-}
-
-var osReadFile = os.ReadFile
-
-func (s *Service) prepareBinaryRequest(result *parseBinaryResult, encryptionKey []byte) (*api.AddBinaryDataRequest, error) {
-	file, err := osReadFile(result.Filepath)
-	if err != nil {
-		return nil, fmt.Errorf("could not read file: %w", err)
-	}
-
-	encryptedFile, err := s.encryption.Encrypt(file, encryptionKey)
-	if err != nil {
-		return nil, fmt.Errorf("could not encrypt file: %w", err)
-	}
-
-	return &api.AddBinaryDataRequest{
-		EncryptedData: encryptedFile,
-		Description:   result.Description,
-	}, nil
-}
-
-func (s *Service) binaryCmd() *cobra.Command {
+func (s *Service) GetBinaryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "binary",
 		Short: "Add a new binary record",
@@ -62,12 +22,12 @@ func (s *Service) binaryCmd() *cobra.Command {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
 
-			tmpResult, err := s.parseBinaryRequest(cmd)
+			tmpResult, err := input.ParseBinaryRequest(cmd)
 			if err != nil {
 				return fmt.Errorf("could not parse request: %w", err)
 			}
 
-			request, err := s.prepareBinaryRequest(tmpResult, encryptionKey)
+			request, err := s.apiPreparer.PrepareBinaryRequest(tmpResult, encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not prepare request: %w", err)
 			}
