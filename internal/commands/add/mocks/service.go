@@ -81,6 +81,20 @@ func (mr *MockApiMockRecorder) AddPasswordData(ctx, in any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPasswordData", reflect.TypeOf((*MockApi)(nil).AddPasswordData), ctx, in)
 }
 
+// AddTextData mocks base method.
+func (m *MockApi) AddTextData(ctx context.Context, in *generated.AddTextDataRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddTextData", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddTextData indicates an expected call of AddTextData.
+func (mr *MockApiMockRecorder) AddTextData(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTextData", reflect.TypeOf((*MockApi)(nil).AddTextData), ctx, in)
+}
+
 // MockCredentialsService is a mock of CredentialsService interface.
 type MockCredentialsService struct {
 	ctrl     *gomock.Controller

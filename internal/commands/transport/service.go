@@ -76,3 +76,21 @@ func (s *Service) AddPasswordData(ctx context.Context, in *generated.AddLoginPas
 
 	return nil
 }
+
+func (s *Service) AddTextData(ctx context.Context, in *generated.AddTextDataRequest) error {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewDataServiceClient(conn)
+	md := utils.GetRequestMetadata(s.token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	_, err = client.AddTextData(ctx, in)
+	if err != nil {
+		return fmt.Errorf("could not add text data: %w", err)
+	}
+
+	return nil
+}

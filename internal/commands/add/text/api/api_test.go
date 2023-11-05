@@ -1,16 +1,25 @@
 package api
 
 import (
-	"reflect"
 	"testing"
 
+	"github.com/nayakunin/gophkeeper/internal/commands/add/text/api/mocks"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/text/input"
 	api "github.com/nayakunin/gophkeeper/proto"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_prepareTextRequest(t *testing.T) {
-	type fields struct {
-		encryption Encryption
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	type encryptionMock struct {
+		enctyptedText []byte
+		err           error
+	}
+	type myMocks struct {
+		encryption encryptionMock
 	}
 	type args struct {
 		result        *input.ParseTextResult
@@ -18,26 +27,78 @@ func TestService_prepareTextRequest(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		fields  fields
+		mocks   myMocks
 		args    args
 		want    *api.AddTextDataRequest
-		wantErr bool
+		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return error if encryption failed",
+			mocks: myMocks{
+				encryption: encryptionMock{
+					err: assert.AnError,
+				},
+			},
+			args: args{
+				result: &input.ParseTextResult{
+					Text:        "text",
+					Description: "description",
+				},
+				encryptionKey: []byte("test"),
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return no error",
+			mocks: myMocks{
+				encryption: encryptionMock{
+					enctyptedText: []byte("encrypted text"),
+				},
+			},
+			args: args{
+				result: &input.ParseTextResult{
+					Text:        "text",
+					Description: "description",
+				},
+				encryptionKey: []byte("test"),
+			},
+			want: &api.AddTextDataRequest{
+				EncryptedText: []byte("encrypted text"),
+				Description:   "description",
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			e := mocks.NewMockEncryption(ctrl)
+
+			e.EXPECT().Encrypt(gomock.Any(), gomock.Any()).Return(tt.mocks.encryption.enctyptedText, tt.mocks.encryption.err)
+
 			s := &Service{
-				encryption: tt.fields.encryption,
+				encryption: e,
 			}
+
 			got, err := s.PrepareTextRequest(tt.args.result, tt.args.encryptionKey)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("prepareTextRequest() error = %v, wantErr %v", err, tt.wantErr)
+
+			if !tt.wantErr(t, err) {
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("prepareTextRequest() got = %v, want %v", got, tt.want)
-			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestNewService(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	e := mocks.NewMockEncryption(ctrl)
+
+	s := NewService(e)
+
+	assert.Equal(t, &Service{
+		encryption: e,
+	}, s)
 }

@@ -3,13 +3,8 @@ package text
 import (
 	"fmt"
 
-	"github.com/nayakunin/gophkeeper/constants"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/text/input"
-	"github.com/nayakunin/gophkeeper/pkg/utils"
-	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 func (s *Service) GetCmd() *cobra.Command {
@@ -17,7 +12,7 @@ func (s *Service) GetCmd() *cobra.Command {
 		Use:   "text",
 		Short: "Add a new text data",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token, encryptionKey, err := s.credentialsService.GetCredentials()
+			_, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
@@ -32,17 +27,7 @@ func (s *Service) GetCmd() *cobra.Command {
 				return fmt.Errorf("could not prepare request: %w", err)
 			}
 
-			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
-			if err != nil {
-				return fmt.Errorf("could not connect: %w", err)
-			}
-			defer conn.Close()
-
-			client := api.NewDataServiceClient(conn)
-
-			md := utils.GetRequestMetadata(token)
-			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
-			_, err = client.AddTextData(ctx, request)
+			err = s.api.AddTextData(cmd.Context(), request)
 			if err != nil {
 				return fmt.Errorf("could not add text data: %w", err)
 			}

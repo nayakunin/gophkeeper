@@ -31,6 +31,7 @@ type Api interface {
 	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
 	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
 	AddPasswordData(ctx context.Context, in *generated.AddLoginPasswordPairRequest) error
+	AddTextData(ctx context.Context, in *generated.AddTextDataRequest) error
 }
 
 // Root is a struct of the grpc.

@@ -16,6 +16,7 @@ type Api interface {
 	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
 	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
 	AddPasswordData(ctx context.Context, in *generated.AddLoginPasswordPairRequest) error
+	AddTextData(ctx context.Context, in *generated.AddTextDataRequest) error
 }
 
 // CredentialsService is an interface for getting credentials.
@@ -54,7 +55,7 @@ func (s *Service) Handle() *cobra.Command {
 	binaryService := binary.NewService(s.credentialsService, s.encryption, s.api)
 	cardService := card.NewService(s.credentialsService, s.encryption, s.api)
 	passwordService := password.NewService(s.credentialsService, s.encryption, s.api)
-	textService := text.NewService(s.credentialsService, s.encryption)
+	textService := text.NewService(s.credentialsService, s.encryption, s.api)
 
 	cmd.AddCommand(passwordService.GetCmd())
 	cmd.AddCommand(binaryService.GetCmd())
