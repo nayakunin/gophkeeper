@@ -9,6 +9,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	input "github.com/nayakunin/gophkeeper/internal/commands/add/card/input"
@@ -39,8 +40,45 @@ func (m *MockApi) EXPECT() *MockApiMockRecorder {
 	return m.recorder
 }
 
+// AddCardData mocks base method.
+func (m *MockApi) AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddCardData", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddCardData indicates an expected call of AddCardData.
+func (mr *MockApiMockRecorder) AddCardData(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCardData", reflect.TypeOf((*MockApi)(nil).AddCardData), ctx, in)
+}
+
+// MockApiPreparer is a mock of ApiPreparer interface.
+type MockApiPreparer struct {
+	ctrl     *gomock.Controller
+	recorder *MockApiPreparerMockRecorder
+}
+
+// MockApiPreparerMockRecorder is the mock recorder for MockApiPreparer.
+type MockApiPreparerMockRecorder struct {
+	mock *MockApiPreparer
+}
+
+// NewMockApiPreparer creates a new mock instance.
+func NewMockApiPreparer(ctrl *gomock.Controller) *MockApiPreparer {
+	mock := &MockApiPreparer{ctrl: ctrl}
+	mock.recorder = &MockApiPreparerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockApiPreparer) EXPECT() *MockApiPreparerMockRecorder {
+	return m.recorder
+}
+
 // PrepareCardRequest mocks base method.
-func (m *MockApi) PrepareCardRequest(data *input.ParseCardResult, encryptionKey []byte) (*generated.AddBankCardDetailRequest, error) {
+func (m *MockApiPreparer) PrepareCardRequest(data *input.ParseCardResult, encryptionKey []byte) (*generated.AddBankCardDetailRequest, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PrepareCardRequest", data, encryptionKey)
 	ret0, _ := ret[0].(*generated.AddBankCardDetailRequest)
@@ -49,9 +87,9 @@ func (m *MockApi) PrepareCardRequest(data *input.ParseCardResult, encryptionKey 
 }
 
 // PrepareCardRequest indicates an expected call of PrepareCardRequest.
-func (mr *MockApiMockRecorder) PrepareCardRequest(data, encryptionKey any) *gomock.Call {
+func (mr *MockApiPreparerMockRecorder) PrepareCardRequest(data, encryptionKey any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrepareCardRequest", reflect.TypeOf((*MockApi)(nil).PrepareCardRequest), data, encryptionKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrepareCardRequest", reflect.TypeOf((*MockApiPreparer)(nil).PrepareCardRequest), data, encryptionKey)
 }
 
 // MockCredentialsService is a mock of CredentialsService interface.

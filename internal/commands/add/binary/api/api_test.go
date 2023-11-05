@@ -117,3 +117,15 @@ func Test_PrepareBinaryRequest(t *testing.T) {
 		})
 	}
 }
+
+func TestNewService(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	e := mocks.NewMockEncryption(ctrl)
+	s := &Service{
+		encryption: e,
+	}
+
+	assert.Equal(t, NewService(e), s)
+}

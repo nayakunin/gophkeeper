@@ -9,10 +9,9 @@
 package mocks
 
 import (
-	context "context"
 	reflect "reflect"
 
-	input "github.com/nayakunin/gophkeeper/internal/commands/add/binary/input"
+	input "github.com/nayakunin/gophkeeper/internal/commands/add/text/input"
 	generated "github.com/nayakunin/gophkeeper/proto"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -40,56 +39,19 @@ func (m *MockApi) EXPECT() *MockApiMockRecorder {
 	return m.recorder
 }
 
-// AddBinaryData mocks base method.
-func (m *MockApi) AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error {
+// PrepareTextRequest mocks base method.
+func (m *MockApi) PrepareTextRequest(result *input.ParseTextResult, encryptionKey []byte) (*generated.AddTextDataRequest, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddBinaryData", ctx, in)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddBinaryData indicates an expected call of AddBinaryData.
-func (mr *MockApiMockRecorder) AddBinaryData(ctx, in any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBinaryData", reflect.TypeOf((*MockApi)(nil).AddBinaryData), ctx, in)
-}
-
-// MockApiPreparer is a mock of ApiPreparer interface.
-type MockApiPreparer struct {
-	ctrl     *gomock.Controller
-	recorder *MockApiPreparerMockRecorder
-}
-
-// MockApiPreparerMockRecorder is the mock recorder for MockApiPreparer.
-type MockApiPreparerMockRecorder struct {
-	mock *MockApiPreparer
-}
-
-// NewMockApiPreparer creates a new mock instance.
-func NewMockApiPreparer(ctrl *gomock.Controller) *MockApiPreparer {
-	mock := &MockApiPreparer{ctrl: ctrl}
-	mock.recorder = &MockApiPreparerMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockApiPreparer) EXPECT() *MockApiPreparerMockRecorder {
-	return m.recorder
-}
-
-// PrepareBinaryRequest mocks base method.
-func (m *MockApiPreparer) PrepareBinaryRequest(result *input.ParseBinaryResult, encryptionKey []byte) (*generated.AddBinaryDataRequest, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PrepareBinaryRequest", result, encryptionKey)
-	ret0, _ := ret[0].(*generated.AddBinaryDataRequest)
+	ret := m.ctrl.Call(m, "PrepareTextRequest", result, encryptionKey)
+	ret0, _ := ret[0].(*generated.AddTextDataRequest)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// PrepareBinaryRequest indicates an expected call of PrepareBinaryRequest.
-func (mr *MockApiPreparerMockRecorder) PrepareBinaryRequest(result, encryptionKey any) *gomock.Call {
+// PrepareTextRequest indicates an expected call of PrepareTextRequest.
+func (mr *MockApiMockRecorder) PrepareTextRequest(result, encryptionKey any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrepareBinaryRequest", reflect.TypeOf((*MockApiPreparer)(nil).PrepareBinaryRequest), result, encryptionKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrepareTextRequest", reflect.TypeOf((*MockApi)(nil).PrepareTextRequest), result, encryptionKey)
 }
 
 // MockCredentialsService is a mock of CredentialsService interface.

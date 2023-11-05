@@ -3,13 +3,8 @@ package binary
 import (
 	"fmt"
 
-	"github.com/nayakunin/gophkeeper/constants"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary/input"
-	"github.com/nayakunin/gophkeeper/pkg/utils"
-	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 func (s *Service) GetCmd() *cobra.Command {
@@ -17,7 +12,7 @@ func (s *Service) GetCmd() *cobra.Command {
 		Use:   "binary",
 		Short: "Add a new binary record",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token, encryptionKey, err := s.credentialsService.GetCredentials()
+			_, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
@@ -32,16 +27,7 @@ func (s *Service) GetCmd() *cobra.Command {
 				return fmt.Errorf("could not prepare request: %w", err)
 			}
 
-			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
-			if err != nil {
-				return fmt.Errorf("could not connect: %w", err)
-			}
-			defer conn.Close()
-
-			client := api.NewDataServiceClient(conn)
-			md := utils.GetRequestMetadata(token)
-			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
-			_, err = client.AddBinaryData(ctx, request)
+			err = s.api.AddBinaryData(cmd.Context(), request)
 			if err != nil {
 				return fmt.Errorf("could not add binary data: %w", err)
 			}
@@ -52,7 +38,6 @@ func (s *Service) GetCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("filepath", "f", "", "File path")
-	_ = cmd.MarkFlagRequired("filepath")
 	cmd.Flags().StringP("description", "d", "", "Description")
 
 	return cmd

@@ -9,10 +9,63 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
+	generated "github.com/nayakunin/gophkeeper/proto"
 	gomock "go.uber.org/mock/gomock"
 )
+
+// MockApi is a mock of Api interface.
+type MockApi struct {
+	ctrl     *gomock.Controller
+	recorder *MockApiMockRecorder
+}
+
+// MockApiMockRecorder is the mock recorder for MockApi.
+type MockApiMockRecorder struct {
+	mock *MockApi
+}
+
+// NewMockApi creates a new mock instance.
+func NewMockApi(ctrl *gomock.Controller) *MockApi {
+	mock := &MockApi{ctrl: ctrl}
+	mock.recorder = &MockApiMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockApi) EXPECT() *MockApiMockRecorder {
+	return m.recorder
+}
+
+// AddBinaryData mocks base method.
+func (m *MockApi) AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddBinaryData", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddBinaryData indicates an expected call of AddBinaryData.
+func (mr *MockApiMockRecorder) AddBinaryData(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBinaryData", reflect.TypeOf((*MockApi)(nil).AddBinaryData), ctx, in)
+}
+
+// AddCardData mocks base method.
+func (m *MockApi) AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddCardData", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddCardData indicates an expected call of AddCardData.
+func (mr *MockApiMockRecorder) AddCardData(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCardData", reflect.TypeOf((*MockApi)(nil).AddCardData), ctx, in)
+}
 
 // MockCredentialsService is a mock of CredentialsService interface.
 type MockCredentialsService struct {

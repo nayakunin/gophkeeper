@@ -2,12 +2,20 @@
 package add
 
 import (
+	"context"
+
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/card"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/password"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/text"
+	generated "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
 )
+
+type Api interface {
+	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
+	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
+}
 
 // CredentialsService is an interface for getting credentials.
 type CredentialsService interface {
@@ -23,13 +31,15 @@ type Encryption interface {
 type Service struct {
 	credentialsService CredentialsService
 	encryption         Encryption
+	api                Api
 }
 
 // NewService returns a new Service.
-func NewService(credentialsService CredentialsService, encryption Encryption) *Service {
+func NewService(credentialsService CredentialsService, encryption Encryption, api Api) *Service {
 	return &Service{
 		credentialsService: credentialsService,
 		encryption:         encryption,
+		api:                api,
 	}
 }
 
@@ -40,8 +50,8 @@ func (s *Service) Handle() *cobra.Command {
 		Short: "Add a new entry",
 	}
 
-	binaryService := binary.NewService(s.credentialsService, s.encryption)
-	cardService := card.NewService(s.credentialsService, s.encryption)
+	binaryService := binary.NewService(s.credentialsService, s.encryption, s.api)
+	cardService := card.NewService(s.credentialsService, s.encryption, s.api)
 	passwordService := password.NewService(s.credentialsService, s.encryption)
 	textService := text.NewService(s.credentialsService, s.encryption)
 

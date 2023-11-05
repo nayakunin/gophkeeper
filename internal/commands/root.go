@@ -1,12 +1,15 @@
+//go:generate mockgen -source=root.go -destination=mocks/service.go -package=mocks
 package commands
 
 import (
+	"context"
 	"fmt"
 	"os"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/nayakunin/gophkeeper/internal/commands/auth"
 	"github.com/nayakunin/gophkeeper/internal/commands/get"
+	generated "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
 )
 
@@ -24,15 +27,19 @@ type Encryption interface {
 	Decrypt(text, key []byte) ([]byte, error)
 }
 
+type Api interface {
+	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
+	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
+}
+
 // Root is a struct of the grpc.
 type Root struct {
-	cmd          *cobra.Command
-	localStorage LocalStorage
+	cmd *cobra.Command
 }
 
 // NewRoot returns a new Root.
-func NewRoot(localStorage LocalStorage, encryption Encryption) Root {
-	addService := add.NewService(localStorage, encryption)
+func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
+	addService := add.NewService(localStorage, encryption, api)
 	authService := auth.NewService(localStorage, encryption)
 	getService := get.NewService(localStorage, encryption)
 

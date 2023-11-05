@@ -16,10 +16,10 @@ func ParseBinaryRequest(cmd *cobra.Command) (*ParseBinaryResult, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not get filepath: %w", err)
 	}
-	description, err := cmd.Flags().GetString("description")
-	if err != nil {
-		return nil, fmt.Errorf("could not get description: %w", err)
+	if filepath == "" {
+		return nil, fmt.Errorf("please provide a filepath")
 	}
+	description, _ := cmd.Flags().GetString("description")
 
 	return &ParseBinaryResult{
 		Filepath:    filepath,

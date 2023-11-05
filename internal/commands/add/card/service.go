@@ -2,12 +2,18 @@
 package card
 
 import (
+	"context"
+
 	"github.com/nayakunin/gophkeeper/internal/commands/add/card/api"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/card/input"
 	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
 type Api interface {
+	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
+}
+
+type ApiPreparer interface {
 	PrepareCardRequest(data *input.ParseCardResult, encryptionKey []byte) (*generated.AddBankCardDetailRequest, error)
 }
 
@@ -24,15 +30,17 @@ type Encryption interface {
 type Service struct {
 	credentialsService CredentialsService
 	encryption         Encryption
-	apiPreparer        Api
+	apiPreparer        ApiPreparer
+	api                Api
 }
 
-func NewService(credentialsService CredentialsService, encryption Encryption) *Service {
+func NewService(credentialsService CredentialsService, encryption Encryption, a Api) *Service {
 	apiPreparer := api.NewService(encryption)
 
 	return &Service{
 		credentialsService: credentialsService,
 		encryption:         encryption,
 		apiPreparer:        apiPreparer,
+		api:                a,
 	}
 }

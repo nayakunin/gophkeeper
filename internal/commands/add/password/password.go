@@ -52,11 +52,8 @@ func (s *Service) GetCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("service", "s", "", "Service name")
-	_ = cmd.MarkFlagRequired("service")
 	cmd.Flags().StringP("login", "l", "", "Login")
-	_ = cmd.MarkFlagRequired("login")
 	cmd.Flags().StringP("password", "p", "", "Password")
-	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringP("description", "d", "", "Description")
 
 	return cmd

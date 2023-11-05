@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/nayakunin/gophkeeper/internal/commands"
+	"github.com/nayakunin/gophkeeper/internal/commands/transport"
 	"github.com/nayakunin/gophkeeper/internal/services/credentials"
 	"github.com/nayakunin/gophkeeper/internal/services/encryption"
 	"github.com/nayakunin/gophkeeper/internal/services/localstorage"
@@ -15,8 +16,9 @@ func main() {
 
 	localStorageService := localstorage.NewStorage(credentialsService)
 	encryptionService := encryption.NewService()
+	apiService := transport.NewService()
 
-	root := commands.NewRoot(localStorageService, encryptionService)
+	root := commands.NewRoot(localStorageService, encryptionService, apiService)
 
 	root.Execute()
 }

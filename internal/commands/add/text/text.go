@@ -53,7 +53,6 @@ func (s *Service) GetCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("text", "t", "", "Text content")
-	_ = cmd.MarkFlagRequired("text")
 	cmd.Flags().StringP("description", "d", "", "Description")
 
 	return cmd

@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary/input"
-	"github.com/nayakunin/gophkeeper/proto"
+	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
 // Encryption is an interface for encrypting and decrypting data.

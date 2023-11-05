@@ -2,12 +2,18 @@
 package binary
 
 import (
+	"context"
+
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary/api"
 	"github.com/nayakunin/gophkeeper/internal/commands/add/binary/input"
-	"github.com/nayakunin/gophkeeper/proto"
+	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
 type Api interface {
+	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
+}
+
+type ApiPreparer interface {
 	PrepareBinaryRequest(result *input.ParseBinaryResult, encryptionKey []byte) (*generated.AddBinaryDataRequest, error)
 }
 
@@ -24,15 +30,17 @@ type Encryption interface {
 type Service struct {
 	credentialsService CredentialsService
 	encryption         Encryption
-	apiPreparer        Api
+	apiPreparer        ApiPreparer
+	api                Api
 }
 
-func NewService(credentialsService CredentialsService, encryption Encryption) *Service {
-	apiPreparer := api.NewService(encryption)
+func NewService(c CredentialsService, e Encryption, a Api) *Service {
+	ap := api.NewService(e)
 
 	return &Service{
-		credentialsService: credentialsService,
-		encryption:         encryption,
-		apiPreparer:        apiPreparer,
+		credentialsService: c,
+		encryption:         e,
+		apiPreparer:        ap,
+		api:                a,
 	}
 }
