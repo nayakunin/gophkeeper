@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add/password/input"
-	"github.com/nayakunin/gophkeeper/proto"
+	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
 type Encryption interface {

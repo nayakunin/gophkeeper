@@ -9,6 +9,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	input "github.com/nayakunin/gophkeeper/internal/commands/add/password/input"
@@ -39,8 +40,45 @@ func (m *MockApi) EXPECT() *MockApiMockRecorder {
 	return m.recorder
 }
 
+// AddPasswordData mocks base method.
+func (m *MockApi) AddPasswordData(ctx context.Context, in *generated.AddLoginPasswordPairRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddPasswordData", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddPasswordData indicates an expected call of AddPasswordData.
+func (mr *MockApiMockRecorder) AddPasswordData(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPasswordData", reflect.TypeOf((*MockApi)(nil).AddPasswordData), ctx, in)
+}
+
+// MockApiPreparer is a mock of ApiPreparer interface.
+type MockApiPreparer struct {
+	ctrl     *gomock.Controller
+	recorder *MockApiPreparerMockRecorder
+}
+
+// MockApiPreparerMockRecorder is the mock recorder for MockApiPreparer.
+type MockApiPreparerMockRecorder struct {
+	mock *MockApiPreparer
+}
+
+// NewMockApiPreparer creates a new mock instance.
+func NewMockApiPreparer(ctrl *gomock.Controller) *MockApiPreparer {
+	mock := &MockApiPreparer{ctrl: ctrl}
+	mock.recorder = &MockApiPreparerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockApiPreparer) EXPECT() *MockApiPreparerMockRecorder {
+	return m.recorder
+}
+
 // PreparePasswordRequest mocks base method.
-func (m *MockApi) PreparePasswordRequest(result *input.ParsePasswordResult, encryptionKey []byte) (*generated.AddLoginPasswordPairRequest, error) {
+func (m *MockApiPreparer) PreparePasswordRequest(result *input.ParsePasswordResult, encryptionKey []byte) (*generated.AddLoginPasswordPairRequest, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PreparePasswordRequest", result, encryptionKey)
 	ret0, _ := ret[0].(*generated.AddLoginPasswordPairRequest)
@@ -49,9 +87,9 @@ func (m *MockApi) PreparePasswordRequest(result *input.ParsePasswordResult, encr
 }
 
 // PreparePasswordRequest indicates an expected call of PreparePasswordRequest.
-func (mr *MockApiMockRecorder) PreparePasswordRequest(result, encryptionKey any) *gomock.Call {
+func (mr *MockApiPreparerMockRecorder) PreparePasswordRequest(result, encryptionKey any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PreparePasswordRequest", reflect.TypeOf((*MockApi)(nil).PreparePasswordRequest), result, encryptionKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PreparePasswordRequest", reflect.TypeOf((*MockApiPreparer)(nil).PreparePasswordRequest), result, encryptionKey)
 }
 
 // MockCredentialsService is a mock of CredentialsService interface.

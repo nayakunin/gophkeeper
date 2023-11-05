@@ -58,3 +58,21 @@ func (s *Service) AddCardData(ctx context.Context, in *generated.AddBankCardDeta
 
 	return nil
 }
+
+func (s *Service) AddPasswordData(ctx context.Context, in *generated.AddLoginPasswordPairRequest) error {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewDataServiceClient(conn)
+	md := utils.GetRequestMetadata(s.token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	_, err = client.AddLoginPasswordPair(ctx, in)
+	if err != nil {
+		return fmt.Errorf("could not add password data: %w", err)
+	}
+
+	return nil
+}

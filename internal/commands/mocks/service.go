@@ -201,3 +201,17 @@ func (mr *MockApiMockRecorder) AddCardData(ctx, in any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCardData", reflect.TypeOf((*MockApi)(nil).AddCardData), ctx, in)
 }
+
+// AddPasswordData mocks base method.
+func (m *MockApi) AddPasswordData(ctx context.Context, in *generated.AddLoginPasswordPairRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddPasswordData", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddPasswordData indicates an expected call of AddPasswordData.
+func (mr *MockApiMockRecorder) AddPasswordData(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPasswordData", reflect.TypeOf((*MockApi)(nil).AddPasswordData), ctx, in)
+}
