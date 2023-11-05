@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add"
-	"github.com/nayakunin/gophkeeper/internal/commands/auth"
 	"github.com/nayakunin/gophkeeper/internal/commands/auth/login"
 	"github.com/nayakunin/gophkeeper/internal/commands/auth/logout"
+	"github.com/nayakunin/gophkeeper/internal/commands/auth/register"
 	"github.com/nayakunin/gophkeeper/internal/commands/get"
 	generated "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
@@ -46,7 +46,6 @@ type Root struct {
 // NewRoot returns a new Root.
 func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
 	addService := add.NewService(localStorage, encryption, api)
-	authService := auth.NewService(localStorage, encryption)
 	getService := get.NewService(localStorage, encryption)
 
 	rootCmd := &cobra.Command{
@@ -60,9 +59,10 @@ func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
 
 	loginService := login.NewService(localStorage, api)
 	logoutService := logout.NewService(localStorage)
+	registerService := register.NewService(encryption, localStorage, api)
 
 	// Root level commands
-	rootCmd.AddCommand(authService.RegisterCmd())
+	rootCmd.AddCommand(registerService.GetCmd())
 	rootCmd.AddCommand(loginService.GetCmd())
 	rootCmd.AddCommand(logoutService.GetCmd())
 

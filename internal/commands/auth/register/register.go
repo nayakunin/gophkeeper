@@ -1,15 +1,13 @@
-package auth
+package register
 
 import (
 	"fmt"
 
-	"github.com/nayakunin/gophkeeper/constants"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
 )
 
-func (s *Service) RegisterCmd() *cobra.Command {
+func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "register",
 		Short: "Register a new user",
@@ -17,21 +15,13 @@ func (s *Service) RegisterCmd() *cobra.Command {
 			username, _ := cmd.Flags().GetString("username")
 			password, _ := cmd.Flags().GetString("password")
 
-			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
-			if err != nil {
-				return fmt.Errorf("could not connect: %w", err)
-			}
-			defer conn.Close()
-
-			client := api.NewRegistrationServiceClient(conn)
-
 			encryptionKey, err := s.encryption.GenerateKey()
 
 			if err != nil {
 				return fmt.Errorf("could not generate encryption key: %w", err)
 			}
 
-			response, err := client.RegisterUser(cmd.Context(), &api.RegisterUserRequest{
+			response, err := s.api.RegisterUser(cmd.Context(), &api.RegisterUserRequest{
 				Username: username,
 				Password: password,
 			})
@@ -49,9 +39,7 @@ func (s *Service) RegisterCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("username", "u", "", "Username for the new user")
-	_ = cmd.MarkFlagRequired("username")
 	cmd.Flags().StringP("password", "p", "", "Password for the new user")
-	_ = cmd.MarkFlagRequired("password")
 
 	return cmd
 }
