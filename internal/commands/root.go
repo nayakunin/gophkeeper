@@ -8,6 +8,7 @@ import (
 
 	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/nayakunin/gophkeeper/internal/commands/auth"
+	"github.com/nayakunin/gophkeeper/internal/commands/auth/login"
 	"github.com/nayakunin/gophkeeper/internal/commands/get"
 	generated "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
@@ -32,6 +33,8 @@ type Api interface {
 	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
 	AddPasswordData(ctx context.Context, in *generated.AddLoginPasswordPairRequest) error
 	AddTextData(ctx context.Context, in *generated.AddTextDataRequest) error
+	AuthenticateUser(ctx context.Context, in *generated.AuthenticateUserRequest) (*generated.AuthenticateUserResponse, error)
+	RegisterUser(ctx context.Context, in *generated.RegisterUserRequest) (*generated.RegisterUserResponse, error)
 }
 
 // Root is a struct of the grpc.
@@ -54,9 +57,11 @@ func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
 		},
 	}
 
+	loginService := login.NewService(localStorage, api)
+
 	// Root level commands
 	rootCmd.AddCommand(authService.RegisterCmd())
-	rootCmd.AddCommand(authService.LoginCmd())
+	rootCmd.AddCommand(loginService.GetCmd())
 	rootCmd.AddCommand(authService.LogoutCmd())
 
 	// Add subcommands

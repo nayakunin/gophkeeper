@@ -1,15 +1,13 @@
-package auth
+package login
 
 import (
 	"fmt"
 
-	"github.com/nayakunin/gophkeeper/constants"
 	api "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
 )
 
-func (s *Service) LoginCmd() *cobra.Command {
+func (s *Service) GetCmd() *cobra.Command {
 	loginCmd := &cobra.Command{
 		Use:   "login",
 		Short: "Log in as a user",
@@ -17,15 +15,7 @@ func (s *Service) LoginCmd() *cobra.Command {
 			username, _ := cmd.Flags().GetString("username")
 			password, _ := cmd.Flags().GetString("password")
 
-			conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
-			if err != nil {
-				return fmt.Errorf("could not connect: %w", err)
-			}
-			defer conn.Close()
-
-			client := api.NewAuthServiceClient(conn)
-
-			response, err := client.AuthenticateUser(cmd.Context(), &api.AuthenticateUserRequest{
+			response, err := s.api.AuthenticateUser(cmd.Context(), &api.AuthenticateUserRequest{
 				Username: username,
 				Password: []byte(password),
 			})
@@ -43,9 +33,7 @@ func (s *Service) LoginCmd() *cobra.Command {
 	}
 
 	loginCmd.Flags().StringP("username", "u", "", "Username for login")
-	_ = loginCmd.MarkFlagRequired("username")
 	loginCmd.Flags().StringP("password", "p", "", "Password for login")
-	_ = loginCmd.MarkFlagRequired("password")
 
 	return loginCmd
 }

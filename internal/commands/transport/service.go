@@ -94,3 +94,35 @@ func (s *Service) AddTextData(ctx context.Context, in *generated.AddTextDataRequ
 
 	return nil
 }
+
+func (s *Service) AuthenticateUser(ctx context.Context, in *generated.AuthenticateUserRequest) (*generated.AuthenticateUserResponse, error) {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewAuthServiceClient(conn)
+	response, err := client.AuthenticateUser(ctx, in)
+	if err != nil {
+		return nil, fmt.Errorf("could not authenticate user: %w", err)
+	}
+
+	return response, nil
+}
+
+func (s *Service) RegisterUser(ctx context.Context, in *generated.RegisterUserRequest) (*generated.RegisterUserResponse, error) {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewRegistrationServiceClient(conn)
+	response, err := client.RegisterUser(ctx, in)
+	if err != nil {
+		return nil, fmt.Errorf("could not register user: %w", err)
+	}
+
+	return response, nil
+}

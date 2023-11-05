@@ -229,3 +229,33 @@ func (mr *MockApiMockRecorder) AddTextData(ctx, in any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTextData", reflect.TypeOf((*MockApi)(nil).AddTextData), ctx, in)
 }
+
+// AuthenticateUser mocks base method.
+func (m *MockApi) AuthenticateUser(ctx context.Context, in *generated.AuthenticateUserRequest) (*generated.AuthenticateUserResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AuthenticateUser", ctx, in)
+	ret0, _ := ret[0].(*generated.AuthenticateUserResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AuthenticateUser indicates an expected call of AuthenticateUser.
+func (mr *MockApiMockRecorder) AuthenticateUser(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateUser", reflect.TypeOf((*MockApi)(nil).AuthenticateUser), ctx, in)
+}
+
+// RegisterUser mocks base method.
+func (m *MockApi) RegisterUser(ctx context.Context, in *generated.RegisterUserRequest) (*generated.RegisterUserResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterUser", ctx, in)
+	ret0, _ := ret[0].(*generated.RegisterUserResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterUser indicates an expected call of RegisterUser.
+func (mr *MockApiMockRecorder) RegisterUser(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUser", reflect.TypeOf((*MockApi)(nil).RegisterUser), ctx, in)
+}
