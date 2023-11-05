@@ -1,4 +1,4 @@
-package auth
+package logout
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func (s *Service) LogoutCmd() *cobra.Command {
+func (s *Service) GetCmd() *cobra.Command {
 	logoutCmd := &cobra.Command{
 		Use:   "logout",
 		Short: "Logout of the CLI",

@@ -9,6 +9,7 @@ import (
 	"github.com/nayakunin/gophkeeper/internal/commands/add"
 	"github.com/nayakunin/gophkeeper/internal/commands/auth"
 	"github.com/nayakunin/gophkeeper/internal/commands/auth/login"
+	"github.com/nayakunin/gophkeeper/internal/commands/auth/logout"
 	"github.com/nayakunin/gophkeeper/internal/commands/get"
 	generated "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
@@ -58,11 +59,12 @@ func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
 	}
 
 	loginService := login.NewService(localStorage, api)
+	logoutService := logout.NewService(localStorage)
 
 	// Root level commands
 	rootCmd.AddCommand(authService.RegisterCmd())
 	rootCmd.AddCommand(loginService.GetCmd())
-	rootCmd.AddCommand(authService.LogoutCmd())
+	rootCmd.AddCommand(logoutService.GetCmd())
 
 	// Add subcommands
 	rootCmd.AddCommand(addService.Handle())
