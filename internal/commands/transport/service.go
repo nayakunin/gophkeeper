@@ -126,3 +126,75 @@ func (s *Service) RegisterUser(ctx context.Context, in *generated.RegisterUserRe
 
 	return response, nil
 }
+
+func (s *Service) GetBinaryData(ctx context.Context) (*generated.GetBinaryDataResponse, error) {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewDataServiceClient(conn)
+	md := utils.GetRequestMetadata(s.token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	response, err := client.GetBinaryData(ctx, &generated.Empty{})
+	if err != nil {
+		return nil, fmt.Errorf("could not get binary data: %w", err)
+	}
+
+	return response, nil
+}
+
+func (s *Service) GetCardDetails(ctx context.Context, in *generated.GetBankCardDetailsRequest) (*generated.GetBankCardDetailsResponse, error) {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewDataServiceClient(conn)
+	md := utils.GetRequestMetadata(s.token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	response, err := client.GetBankCardDetails(ctx, in)
+	if err != nil {
+		return nil, fmt.Errorf("could not get card data: %w", err)
+	}
+
+	return response, nil
+}
+
+func (s *Service) GetLoginPasswordPairs(ctx context.Context, in *generated.GetLoginPasswordPairsRequest) (*generated.GetLoginPasswordPairsResponse, error) {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewDataServiceClient(conn)
+	md := utils.GetRequestMetadata(s.token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	response, err := client.GetLoginPasswordPairs(ctx, in)
+	if err != nil {
+		return nil, fmt.Errorf("could not get password data: %w", err)
+	}
+
+	return response, nil
+}
+
+func (s *Service) GetTextData(ctx context.Context) (*generated.GetTextDataResponse, error) {
+	conn, err := grpc.Dial(constants.GrpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, fmt.Errorf("could not connect: %w", err)
+	}
+	defer conn.Close()
+
+	client := generated.NewDataServiceClient(conn)
+	md := utils.GetRequestMetadata(s.token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	response, err := client.GetTextData(ctx, &generated.Empty{})
+	if err != nil {
+		return nil, fmt.Errorf("could not get text data: %w", err)
+	}
+
+	return response, nil
+}

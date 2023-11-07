@@ -245,6 +245,66 @@ func (mr *MockApiMockRecorder) AuthenticateUser(ctx, in any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateUser", reflect.TypeOf((*MockApi)(nil).AuthenticateUser), ctx, in)
 }
 
+// GetBinaryData mocks base method.
+func (m *MockApi) GetBinaryData(ctx context.Context) (*generated.GetBinaryDataResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBinaryData", ctx)
+	ret0, _ := ret[0].(*generated.GetBinaryDataResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBinaryData indicates an expected call of GetBinaryData.
+func (mr *MockApiMockRecorder) GetBinaryData(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBinaryData", reflect.TypeOf((*MockApi)(nil).GetBinaryData), ctx)
+}
+
+// GetCardDetails mocks base method.
+func (m *MockApi) GetCardDetails(ctx context.Context, in *generated.GetBankCardDetailsRequest) (*generated.GetBankCardDetailsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCardDetails", ctx, in)
+	ret0, _ := ret[0].(*generated.GetBankCardDetailsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCardDetails indicates an expected call of GetCardDetails.
+func (mr *MockApiMockRecorder) GetCardDetails(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCardDetails", reflect.TypeOf((*MockApi)(nil).GetCardDetails), ctx, in)
+}
+
+// GetLoginPasswordPairs mocks base method.
+func (m *MockApi) GetLoginPasswordPairs(ctx context.Context, in *generated.GetLoginPasswordPairsRequest) (*generated.GetLoginPasswordPairsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLoginPasswordPairs", ctx, in)
+	ret0, _ := ret[0].(*generated.GetLoginPasswordPairsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLoginPasswordPairs indicates an expected call of GetLoginPasswordPairs.
+func (mr *MockApiMockRecorder) GetLoginPasswordPairs(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLoginPasswordPairs", reflect.TypeOf((*MockApi)(nil).GetLoginPasswordPairs), ctx, in)
+}
+
+// GetTextData mocks base method.
+func (m *MockApi) GetTextData(ctx context.Context) (*generated.GetTextDataResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTextData", ctx)
+	ret0, _ := ret[0].(*generated.GetTextDataResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTextData indicates an expected call of GetTextData.
+func (mr *MockApiMockRecorder) GetTextData(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTextData", reflect.TypeOf((*MockApi)(nil).GetTextData), ctx)
+}
+
 // RegisterUser mocks base method.
 func (m *MockApi) RegisterUser(ctx context.Context, in *generated.RegisterUserRequest) (*generated.RegisterUserResponse, error) {
 	m.ctrl.T.Helper()

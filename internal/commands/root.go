@@ -36,6 +36,10 @@ type Api interface {
 	AddTextData(ctx context.Context, in *generated.AddTextDataRequest) error
 	AuthenticateUser(ctx context.Context, in *generated.AuthenticateUserRequest) (*generated.AuthenticateUserResponse, error)
 	RegisterUser(ctx context.Context, in *generated.RegisterUserRequest) (*generated.RegisterUserResponse, error)
+	GetBinaryData(ctx context.Context) (*generated.GetBinaryDataResponse, error)
+	GetCardDetails(ctx context.Context, in *generated.GetBankCardDetailsRequest) (*generated.GetBankCardDetailsResponse, error)
+	GetLoginPasswordPairs(ctx context.Context, in *generated.GetLoginPasswordPairsRequest) (*generated.GetLoginPasswordPairsResponse, error)
+	GetTextData(ctx context.Context) (*generated.GetTextDataResponse, error)
 }
 
 // Root is a struct of the grpc.
