@@ -1,35 +1,54 @@
 package input
 
 import (
-	"reflect"
 	"testing"
 
 	generated "github.com/nayakunin/gophkeeper/proto"
 	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseCardRequest(t *testing.T) {
 	type args struct {
-		cmd *cobra.Command
+		label string
 	}
 	tests := []struct {
 		name    string
 		args    args
 		want    *generated.GetBankCardDetailsRequest
-		wantErr bool
+		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return error if card label is empty",
+			args: args{
+				label: "",
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return card request",
+			args: args{
+				label: "test",
+			},
+			want: &generated.GetBankCardDetailsRequest{
+				CardName: "test",
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParseCardRequest(tt.args.cmd)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseCardRequest() error = %v, wantErr %v", err, tt.wantErr)
+			cmd := &cobra.Command{}
+
+			cmd.Flags().String("label", tt.args.label, "")
+
+			got, err := ParseCardRequest(cmd)
+
+			if !tt.wantErr(t, err) {
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ParseCardRequest() = %v, want %v", got, tt.want)
-			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

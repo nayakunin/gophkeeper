@@ -1,37 +1,137 @@
 package text
 
 import (
-	"reflect"
 	"testing"
 
-	"github.com/spf13/cobra"
+	"github.com/nayakunin/gophkeeper/internal/commands/get/text/mocks"
+	"github.com/nayakunin/gophkeeper/internal/commands/get/text/output"
+	generated "github.com/nayakunin/gophkeeper/proto"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_GetCmd(t *testing.T) {
-	type fields struct {
-		credentialsService CredentialsService
-		encryption         Encryption
-		api                Api
-		output             Output
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	type apiMock struct {
+		response *generated.GetTextDataResponse
+		err      error
 	}
+
+	type credentialsMock struct {
+		key []byte
+		err error
+	}
+
+	type outputMock struct {
+		response []output.TextResult
+		err      error
+	}
+
 	tests := []struct {
-		name   string
-		fields fields
-		want   *cobra.Command
+		name            string
+		apiMock         *apiMock
+		credentialsMock *credentialsMock
+		outputMock      *outputMock
+		wantErr         assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return error if could not get credentials",
+			credentialsMock: &credentialsMock{
+				err: assert.AnError,
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return error if could not get text data",
+			credentialsMock: &credentialsMock{
+				key: []byte("test"),
+			},
+			apiMock: &apiMock{
+				err: assert.AnError,
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return error if could not make text response",
+			credentialsMock: &credentialsMock{
+				key: []byte("test"),
+			},
+			apiMock: &apiMock{
+				response: &generated.GetTextDataResponse{
+					TextData: []*generated.GetTextDataResponseItem{
+						{
+							EncryptedText: []byte("test"),
+							Id:            1,
+							Description:   "test",
+						},
+					},
+				},
+			},
+			outputMock: &outputMock{
+				err: assert.AnError,
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return response",
+			apiMock: &apiMock{
+				response: &generated.GetTextDataResponse{
+					TextData: []*generated.GetTextDataResponseItem{
+						{
+							EncryptedText: []byte("test"),
+							Id:            1,
+							Description:   "test",
+						},
+					},
+				},
+			},
+			credentialsMock: &credentialsMock{
+				key: []byte("test"),
+			},
+			outputMock: &outputMock{
+				response: []output.TextResult{
+					{
+						Description: "test",
+						Text:        "test",
+					},
+				},
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			cs := mocks.NewMockCredentialsService(ctrl)
+			e := mocks.NewMockEncryption(ctrl)
+			api := mocks.NewMockApi(ctrl)
+			out := mocks.NewMockOutput(ctrl)
+
+			if tt.apiMock != nil {
+				api.EXPECT().GetTextData(gomock.Any()).Return(tt.apiMock.response, tt.apiMock.err)
+			}
+
+			if tt.credentialsMock != nil {
+				cs.EXPECT().GetCredentials().Return("", tt.credentialsMock.key, tt.credentialsMock.err)
+			}
+
+			if tt.outputMock != nil {
+				out.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.outputMock.response, tt.outputMock.err)
+			}
+
 			s := &Service{
-				credentialsService: tt.fields.credentialsService,
-				encryption:         tt.fields.encryption,
-				api:                tt.fields.api,
-				output:             tt.fields.output,
+				api:                api,
+				credentialsService: cs,
+				output:             out,
+				encryption:         e,
 			}
-			if got := s.GetCmd(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Service.GetCmd() = %v, want %v", got, tt.want)
-			}
+
+			cmd := s.GetCmd()
+
+			err := cmd.RunE(cmd, nil)
+
+			tt.wantErr(t, err)
 		})
 	}
 }

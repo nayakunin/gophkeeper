@@ -2,28 +2,28 @@
 package password
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/nayakunin/gophkeeper/internal/commands/get/password/mocks"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestNewService(t *testing.T) {
-	type args struct {
-		encryption         Encryption
-		credentialsService CredentialsService
-		api                Api
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Service
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewService(tt.args.encryption, tt.args.credentialsService, tt.args.api); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewService() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	api := mocks.NewMockApi(ctrl)
+	cs := mocks.NewMockCredentialsService(ctrl)
+	encryption := mocks.NewMockEncryption(ctrl)
+	out := mocks.NewMockOutput(ctrl)
+
+	s := NewService(encryption, cs, api)
+
+	assert.Equal(t, &Service{
+		output:             out,
+		credentialsService: cs,
+		encryption:         encryption,
+		api:                api,
+	}, s)
 }

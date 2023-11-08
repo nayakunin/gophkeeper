@@ -2,42 +2,130 @@
 package output
 
 import (
-	"reflect"
 	"testing"
 
+	"github.com/nayakunin/gophkeeper/internal/commands/get/binary/output/mocks"
 	generated "github.com/nayakunin/gophkeeper/proto"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_MakeResponse(t *testing.T) {
-	type fields struct {
-		encryption Encryption
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	type encryptionMock struct {
+		data []byte
+		err  error
 	}
 	type args struct {
-		response      *generated.GetBankCardDetailsResponse
-		encryptionKey []byte
+		response *generated.GetBankCardDetailsResponse
 	}
+
+	defaultArgs := args{
+		response: &generated.GetBankCardDetailsResponse{
+			BankCardDetails: []*generated.BankCardDetail{
+				{
+					EncryptedCardNumber: []byte("test"),
+					EncryptedExpiryDate: []byte("test"),
+					Id:                  1,
+					CardName:            "test",
+					EncryptedCvc:        []byte("test"),
+					Description:         "test",
+				},
+			},
+		},
+	}
+
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
+		em      []encryptionMock
 		want    []CardResult
-		wantErr bool
+		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return error if could not decrypt card number",
+			args: defaultArgs,
+			em: []encryptionMock{
+				{
+					err: assert.AnError,
+				},
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return error if could not decrypt card expiration date",
+			args: defaultArgs,
+			em: []encryptionMock{
+				{
+					data: []byte("test"),
+				},
+				{
+					err: assert.AnError,
+				},
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return error if could not decrypt card CVC",
+			args: defaultArgs,
+			em: []encryptionMock{
+				{
+					data: []byte("test"),
+				},
+				{
+					data: []byte("test2"),
+				},
+				{
+					err: assert.AnError,
+				},
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return card result",
+			args: defaultArgs,
+			em: []encryptionMock{
+				{
+					data: []byte("test"),
+				},
+				{
+					data: []byte("test2"),
+				},
+				{
+					data: []byte("test3"),
+				},
+			},
+			want: []CardResult{
+				{
+					Name:        "test",
+					Number:      "test",
+					Expiration:  "test2",
+					Cvc:         "test3",
+					Description: "test",
+				},
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				encryption: tt.fields.encryption,
+			e := mocks.NewMockEncryption(ctrl)
+
+			for i, em := range tt.em {
+				e.EXPECT().Decrypt(gomock.Any(), gomock.Any()).Return(em.data, em.err).Times(i + 1)
 			}
-			got, err := s.MakeResponse(tt.args.response, tt.args.encryptionKey)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Service.MakeResponse() error = %v, wantErr %v", err, tt.wantErr)
+
+			s := NewService(e)
+
+			got, err := s.MakeResponse(tt.args.response, []byte("test"))
+
+			if !tt.wantErr(t, err) {
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Service.MakeResponse() = %v, want %v", got, tt.want)
-			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

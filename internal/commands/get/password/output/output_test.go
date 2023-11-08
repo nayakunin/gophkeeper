@@ -2,42 +2,99 @@
 package output
 
 import (
-	"reflect"
 	"testing"
 
+	"github.com/nayakunin/gophkeeper/internal/commands/get/password/output/mocks"
 	generated "github.com/nayakunin/gophkeeper/proto"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_MakeResponse(t *testing.T) {
-	type fields struct {
-		encryption Encryption
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	type encryptionMock struct {
+		data []byte
+		err  error
 	}
+
 	type args struct {
-		response      *generated.GetLoginPasswordPairsResponse
-		encryptionKey []byte
+		response *generated.GetLoginPasswordPairsResponse
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []PasswordResult
-		wantErr bool
+		name           string
+		encryptionMock *encryptionMock
+		args           args
+		want           []PasswordResult
+		wantErr        assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return error if could not decrypt password",
+			encryptionMock: &encryptionMock{
+				err: assert.AnError,
+			},
+			args: args{
+				response: &generated.GetLoginPasswordPairsResponse{
+					LoginPasswordPairs: []*generated.LoginPasswordPair{
+						{
+							EncryptedPassword: []byte("test"),
+							Id:                1,
+							Login:             "test",
+							Description:       "test",
+							ServiceName:       "test",
+						},
+					},
+				},
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return response",
+			encryptionMock: &encryptionMock{
+				data: []byte("test"),
+			},
+			args: args{
+				response: &generated.GetLoginPasswordPairsResponse{
+					LoginPasswordPairs: []*generated.LoginPasswordPair{
+						{
+							EncryptedPassword: []byte("test"),
+							Id:                1,
+							Login:             "test",
+							Description:       "test",
+							ServiceName:       "test",
+						},
+					},
+				},
+			},
+			want: []PasswordResult{
+				{
+					Login:       "test",
+					Password:    "test",
+					Description: "test",
+					ServiceName: "test",
+				},
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				encryption: tt.fields.encryption,
+			e := mocks.NewMockEncryption(ctrl)
+
+			if tt.encryptionMock != nil {
+				e.EXPECT().Decrypt(gomock.Any(), gomock.Any()).Return(tt.encryptionMock.data, tt.encryptionMock.err)
 			}
-			got, err := s.MakeResponse(tt.args.response, tt.args.encryptionKey)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Service.MakeResponse() error = %v, wantErr %v", err, tt.wantErr)
+
+			s := NewService(e)
+
+			got, err := s.MakeResponse(tt.args.response, []byte("test"))
+
+			if !tt.wantErr(t, err) {
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Service.MakeResponse() = %v, want %v", got, tt.want)
-			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
