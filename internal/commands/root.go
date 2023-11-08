@@ -48,7 +48,7 @@ type Root struct {
 }
 
 // NewRoot returns a new Root.
-func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
+func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) *Root {
 	addService := add.NewService(localStorage, encryption, api)
 	getService := get.NewService(localStorage, encryption)
 
@@ -76,7 +76,7 @@ func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) Root {
 	// Get subcommands
 	rootCmd.AddCommand(getService.Handle())
 
-	return Root{
+	return &Root{
 		cmd: rootCmd,
 	}
 }
