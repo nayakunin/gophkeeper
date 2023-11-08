@@ -13,7 +13,7 @@ type Api interface {
 }
 
 type Output interface {
-	MakeBinaryResponse(response *generated.GetBinaryDataResponse, encryptionKey []byte) ([]output.BinaryResult, error)
+	MakeResponse(response *generated.GetBinaryDataResponse, encryptionKey []byte) ([]output.BinaryResult, error)
 }
 
 type CredentialsService interface {

@@ -26,7 +26,7 @@ type BinaryResult struct {
 	Description string `json:"description"`
 }
 
-func (s *Service) MakeBinaryResponse(response *generated.GetBinaryDataResponse, encryptionKey []byte) ([]BinaryResult, error) {
+func (s *Service) MakeResponse(response *generated.GetBinaryDataResponse, encryptionKey []byte) ([]BinaryResult, error) {
 	results := make([]BinaryResult, len(response.GetBinaryData()))
 	for i, pair := range response.GetBinaryData() {
 		data, err := s.encryption.Decrypt(pair.GetEncryptedData(), encryptionKey)

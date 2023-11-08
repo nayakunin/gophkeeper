@@ -1,29 +1,28 @@
-//go:generate mockgen -source=service.go -destination=mocks/service.go -package=mocks
 package binary
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/nayakunin/gophkeeper/internal/commands/get/binary/mocks"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestNewService(t *testing.T) {
-	type args struct {
-		encryption         Encryption
-		credentialsService CredentialsService
-		api                Api
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Service
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewService(tt.args.encryption, tt.args.credentialsService, tt.args.api); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewService() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	cs := mocks.NewMockCredentialsService(ctrl)
+	es := mocks.NewMockEncryption(ctrl)
+	api := mocks.NewMockApi(ctrl)
+	out := mocks.NewMockOutput(ctrl)
+
+	s := NewService(es, cs, api)
+
+	assert.Equal(t, &Service{
+		encryption:         es,
+		credentialsService: cs,
+		output:             out,
+		api:                api,
+	}, s)
 }

@@ -22,7 +22,7 @@ func (s *Service) GetCmd() *cobra.Command {
 				return fmt.Errorf("could not get binary data: %w", err)
 			}
 
-			results, err := s.output.MakeBinaryResponse(response, encryptionKey)
+			results, err := s.output.MakeResponse(response, encryptionKey)
 			if err != nil {
 				return fmt.Errorf("could not make binary response: %w", err)
 			}

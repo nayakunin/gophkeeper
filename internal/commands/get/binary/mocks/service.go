@@ -78,19 +78,19 @@ func (m *MockOutput) EXPECT() *MockOutputMockRecorder {
 	return m.recorder
 }
 
-// MakeBinaryResponse mocks base method.
-func (m *MockOutput) MakeBinaryResponse(response *generated.GetBinaryDataResponse, encryptionKey []byte) ([]output.BinaryResult, error) {
+// MakeResponse mocks base method.
+func (m *MockOutput) MakeResponse(response *generated.GetBinaryDataResponse, encryptionKey []byte) ([]output.BinaryResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MakeBinaryResponse", response, encryptionKey)
+	ret := m.ctrl.Call(m, "MakeResponse", response, encryptionKey)
 	ret0, _ := ret[0].([]output.BinaryResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// MakeBinaryResponse indicates an expected call of MakeBinaryResponse.
-func (mr *MockOutputMockRecorder) MakeBinaryResponse(response, encryptionKey any) *gomock.Call {
+// MakeResponse indicates an expected call of MakeResponse.
+func (mr *MockOutputMockRecorder) MakeResponse(response, encryptionKey any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeBinaryResponse", reflect.TypeOf((*MockOutput)(nil).MakeBinaryResponse), response, encryptionKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeResponse", reflect.TypeOf((*MockOutput)(nil).MakeResponse), response, encryptionKey)
 }
 
 // MockCredentialsService is a mock of CredentialsService interface.
