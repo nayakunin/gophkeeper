@@ -8,15 +8,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetCmd returns the card command.
 func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "card",
 		Short: "Add a new credit card",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, encryptionKey, err := s.credentialsService.GetCredentials()
+			token, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
+			s.api.SetToken(token)
 
 			tmpResult, err := input.ParseCardRequest(cmd)
 			if err != nil {

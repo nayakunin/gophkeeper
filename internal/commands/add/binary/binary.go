@@ -7,15 +7,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetCmd returns the binary command.
 func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "binary",
 		Short: "Add a new binary record",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, encryptionKey, err := s.credentialsService.GetCredentials()
+			token, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
+			s.api.SetToken(token)
 
 			tmpResult, err := input.ParseBinaryRequest(cmd)
 			if err != nil {

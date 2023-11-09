@@ -7,20 +7,24 @@ import (
 	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
+// Encryption is an interface for encrypting and decrypting data.
 type Encryption interface {
 	Decrypt(text, key []byte) ([]byte, error)
 }
 
+// Service is an interface for interacting with the API.
 type Service struct {
 	encryption Encryption
 }
 
+// NewService creates a new instance of Service.
 func NewService(encryption Encryption) *Service {
 	return &Service{
 		encryption: encryption,
 	}
 }
 
+// MakeResponse prepares a response.
 type CardResult struct {
 	Name        string `json:"label"`
 	Number      string `json:"number"`
@@ -29,6 +33,7 @@ type CardResult struct {
 	Description string `json:"description"`
 }
 
+// MakeResponse prepares a response to get card data.
 func (s *Service) MakeResponse(response *generated.GetBankCardDetailsResponse, encryptionKey []byte) ([]CardResult, error) {
 	results := make([]CardResult, len(response.GetBankCardDetails()))
 	for i, card := range response.GetBankCardDetails() {

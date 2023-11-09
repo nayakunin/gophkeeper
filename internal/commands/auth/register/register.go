@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Service is the register service.
 func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "register",

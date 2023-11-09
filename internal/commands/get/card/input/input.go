@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ParseCardResult is the result of parsing a card request.
 func ParseCardRequest(cmd *cobra.Command) (*generated.GetBankCardDetailsRequest, error) {
 	label, err := cmd.Flags().GetString("label")
 	if err != nil {

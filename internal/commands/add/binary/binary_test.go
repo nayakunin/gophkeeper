@@ -134,6 +134,8 @@ func TestService_GetCmd(t *testing.T) {
 				a.EXPECT().AddBinaryData(gomock.Any(), gomock.Any()).Return(tt.mocks.a.err)
 			}
 
+			a.EXPECT().SetToken(gomock.Any()).Return()
+
 			s := &Service{
 				credentialsService: c,
 				encryption:         e,

@@ -136,6 +136,8 @@ func TestService_passwordCmd(t *testing.T) {
 				a.EXPECT().AddPasswordData(gomock.Any(), gomock.Any()).Return(tt.mock.apiMock.err)
 			}
 
+			a.EXPECT().SetToken(gomock.Any()).Return()
+
 			s := &Service{
 				credentialsService: c,
 				encryption:         e,

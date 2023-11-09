@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Service is the logout service.
 func (s *Service) GetCmd() *cobra.Command {
 	logoutCmd := &cobra.Command{
 		Use:   "logout",

@@ -90,6 +90,8 @@ func TestService_GetCmd(t *testing.T) {
 				output.EXPECT().MakeResponse(tt.api.response, tt.csm.key).Return(tt.output.response, tt.output.err)
 			}
 
+			api.EXPECT().SetToken(gomock.Any()).Return()
+
 			s := &Service{
 				credentialsService: csm,
 				api:                api,

@@ -55,6 +55,18 @@ func (mr *MockApiMockRecorder) GetLoginPasswordPairs(ctx, in any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLoginPasswordPairs", reflect.TypeOf((*MockApi)(nil).GetLoginPasswordPairs), ctx, in)
 }
 
+// SetToken mocks base method.
+func (m *MockApi) SetToken(token string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetToken", token)
+}
+
+// SetToken indicates an expected call of SetToken.
+func (mr *MockApiMockRecorder) SetToken(token any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetToken", reflect.TypeOf((*MockApi)(nil).SetToken), token)
+}
+
 // MockOutput is a mock of Output interface.
 type MockOutput struct {
 	ctrl     *gomock.Controller

@@ -12,11 +12,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Api is an interface for interacting with the API.
 type Api interface {
 	GetBinaryData(ctx context.Context) (*generated.GetBinaryDataResponse, error)
 	GetCardDetails(ctx context.Context, in *generated.GetBankCardDetailsRequest) (*generated.GetBankCardDetailsResponse, error)
 	GetLoginPasswordPairs(ctx context.Context, in *generated.GetLoginPasswordPairsRequest) (*generated.GetLoginPasswordPairsResponse, error)
 	GetTextData(ctx context.Context) (*generated.GetTextDataResponse, error)
+	SetToken(token string)
 }
 
 // CredentialsService is an interface for getting credentials.
@@ -33,17 +35,19 @@ type Encryption interface {
 type Service struct {
 	credentialsService CredentialsService
 	encryption         Encryption
-	api 							Api
+	api                Api
 }
 
 // NewService returns a new Service.
-func NewService(credentialsService CredentialsService, encryption Encryption) *Service {
+func NewService(credentialsService CredentialsService, encryption Encryption, api Api) *Service {
 	return &Service{
 		credentialsService: credentialsService,
 		encryption:         encryption,
+		api:                api,
 	}
 }
 
+// Handle returns a new cobra command.
 func (s *Service) Handle() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",

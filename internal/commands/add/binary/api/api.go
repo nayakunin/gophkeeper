@@ -14,10 +14,12 @@ type Encryption interface {
 	Encrypt(text, key []byte) ([]byte, error)
 }
 
+// Service is an interface for interacting with the API.
 type Service struct {
 	encryption Encryption
 }
 
+// NewService creates a new instance of Service.
 func NewService(encryption Encryption) *Service {
 	return &Service{
 		encryption: encryption,
@@ -26,6 +28,7 @@ func NewService(encryption Encryption) *Service {
 
 var osReadFile = os.ReadFile
 
+// PrepareBinaryRequest prepares a request to add binary data.
 func (a *Service) PrepareBinaryRequest(result *input.ParseBinaryResult, encryptionKey []byte) (*generated.AddBinaryDataRequest, error) {
 	file, err := osReadFile(result.Filepath)
 	if err != nil {

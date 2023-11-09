@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ParsePasswordResult is the result of parsing a password request.
 type ParsePasswordResult struct {
 	ServiceName string
 	Login       string
@@ -13,6 +14,7 @@ type ParsePasswordResult struct {
 	Description string
 }
 
+// ParsePasswordRequest parses a password request.
 func ParsePasswordRequest(cmd *cobra.Command) (*ParsePasswordResult, error) {
 	serviceName, err := cmd.Flags().GetString("service")
 	if err != nil {

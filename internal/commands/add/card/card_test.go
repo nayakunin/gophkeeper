@@ -136,6 +136,8 @@ func TestService_GetCmd(t *testing.T) {
 				a.EXPECT().AddCardData(gomock.Any(), gomock.Any()).Return(tt.mocks.a.err)
 			}
 
+			a.EXPECT().SetToken(gomock.Any()).Return()
+
 			s := &Service{
 				credentialsService: c,
 				encryption:         e,

@@ -7,15 +7,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetCmd returns the password command.
 func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "password",
 		Short: "Add a new password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, encryptionKey, err := s.credentialsService.GetCredentials()
+			token, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
+			s.api.SetToken(token)
 
 			tmpResult, err := input.ParsePasswordRequest(cmd)
 			if err != nil {

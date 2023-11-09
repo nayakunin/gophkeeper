@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetCmd returns the login command.
 func (s *Service) GetCmd() *cobra.Command {
 	loginCmd := &cobra.Command{
 		Use:   "login",

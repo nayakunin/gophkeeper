@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ParsePasswordResult is the result of parsing a password request.
 func ParsePasswordRequest(cmd *cobra.Command) (*generated.GetLoginPasswordPairsRequest, error) {
 	serviceName, err := cmd.Flags().GetString("service")
 	if err != nil {

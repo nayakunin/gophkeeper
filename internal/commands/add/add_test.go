@@ -16,34 +16,13 @@ func TestNewService(t *testing.T) {
 	c := mocks.NewMockCredentialsService(ctrl)
 	a := mocks.NewMockApi(ctrl)
 
-	type args struct {
-		credentialsService CredentialsService
-		encryption         Encryption
-		api                Api
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Service
-	}{{
-		name: "TestNewService",
-		args: args{
-			credentialsService: c,
-			encryption:         e,
-			api:                a,
-		},
-		want: &Service{
-			credentialsService: c,
-			encryption:         e,
-			api:                a,
-		},
-	}}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := NewService(tt.args.credentialsService, tt.args.encryption, tt.args.api)
-			assert.Equal(t, tt.want, got)
-		})
-	}
+	got := NewService(c, e, a)
+
+	assert.Equal(t, &Service{
+		credentialsService: c,
+		encryption:         e,
+		api:                a,
+	}, got)
 }
 
 func TestService_Handle(t *testing.T) {

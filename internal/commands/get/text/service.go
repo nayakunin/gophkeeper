@@ -8,10 +8,13 @@ import (
 	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
+// Api is an interface for interacting with the API.
 type Api interface {
 	GetTextData(ctx context.Context) (*generated.GetTextDataResponse, error)
+	SetToken(token string)
 }
 
+// Output is an interface for preparing output.
 type Output interface {
 	MakeResponse(response *generated.GetTextDataResponse, encryptionKey []byte) ([]output.TextResult, error)
 }

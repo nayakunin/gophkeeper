@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ParseCardResult is the result of parsing a card request.
 type ParseCardResult struct {
 	Name        string
 	Number      string
@@ -14,6 +15,7 @@ type ParseCardResult struct {
 	Description string
 }
 
+// ParseCardRequest parses a card request
 func ParseCardRequest(cmd *cobra.Command) (*ParseCardResult, error) {
 	name, err := cmd.Flags().GetString("label")
 	if err != nil {

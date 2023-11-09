@@ -120,6 +120,8 @@ func TestService_GetCmd(t *testing.T) {
 				out.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.outputMock.response, tt.outputMock.err)
 			}
 
+			api.EXPECT().SetToken(gomock.Any()).Return()
+
 			s := &Service{
 				api:                api,
 				credentialsService: cs,

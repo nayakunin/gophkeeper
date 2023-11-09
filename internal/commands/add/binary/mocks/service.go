@@ -54,6 +54,18 @@ func (mr *MockApiMockRecorder) AddBinaryData(ctx, in any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBinaryData", reflect.TypeOf((*MockApi)(nil).AddBinaryData), ctx, in)
 }
 
+// SetToken mocks base method.
+func (m *MockApi) SetToken(token string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetToken", token)
+}
+
+// SetToken indicates an expected call of SetToken.
+func (mr *MockApiMockRecorder) SetToken(token any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetToken", reflect.TypeOf((*MockApi)(nil).SetToken), token)
+}
+
 // MockApiPreparer is a mock of ApiPreparer interface.
 type MockApiPreparer struct {
 	ctrl     *gomock.Controller

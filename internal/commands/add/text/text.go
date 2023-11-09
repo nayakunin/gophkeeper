@@ -7,15 +7,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetCmd returns the text command.
 func (s *Service) GetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "text",
 		Short: "Add a new text data",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, encryptionKey, err := s.credentialsService.GetCredentials()
+			token, encryptionKey, err := s.credentialsService.GetCredentials()
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
+			s.api.SetToken(token)
 
 			tmpResult, err := input.ParseTextRequest(cmd)
 			if err != nil {

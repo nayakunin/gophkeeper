@@ -9,10 +9,13 @@ import (
 	generated "github.com/nayakunin/gophkeeper/proto"
 )
 
+// Api is an interface for interacting with the API.
 type Api interface {
 	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
+	SetToken(token string)
 }
 
+// ApiPreparer is an interface for preparing API requests.
 type ApiPreparer interface {
 	PrepareBinaryRequest(result *input.ParseBinaryResult, encryptionKey []byte) (*generated.AddBinaryDataRequest, error)
 }
@@ -27,6 +30,7 @@ type Encryption interface {
 	Encrypt(text, key []byte) ([]byte, error)
 }
 
+// Service is an interface for interacting with the API.
 type Service struct {
 	credentialsService CredentialsService
 	encryption         Encryption
@@ -34,6 +38,7 @@ type Service struct {
 	api                Api
 }
 
+// NewService creates a new instance of Service.
 func NewService(c CredentialsService, e Encryption, a Api) *Service {
 	ap := api.NewService(e)
 

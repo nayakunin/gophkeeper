@@ -135,6 +135,8 @@ func TestService_textCmd(t *testing.T) {
 				a.EXPECT().AddTextData(gomock.Any(), gomock.Any()).Return(tt.mock.apiMock.err)
 			}
 
+			a.EXPECT().SetToken(gomock.Any()).Return()
+
 			s := &Service{
 				credentialsService: c,
 				encryption:         e,

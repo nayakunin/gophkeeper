@@ -29,6 +29,7 @@ type Encryption interface {
 	Decrypt(text, key []byte) ([]byte, error)
 }
 
+// Api is an interface for interacting with the API.
 type Api interface {
 	AddBinaryData(ctx context.Context, in *generated.AddBinaryDataRequest) error
 	AddCardData(ctx context.Context, in *generated.AddBankCardDetailRequest) error
@@ -40,6 +41,7 @@ type Api interface {
 	GetCardDetails(ctx context.Context, in *generated.GetBankCardDetailsRequest) (*generated.GetBankCardDetailsResponse, error)
 	GetLoginPasswordPairs(ctx context.Context, in *generated.GetLoginPasswordPairsRequest) (*generated.GetLoginPasswordPairsResponse, error)
 	GetTextData(ctx context.Context) (*generated.GetTextDataResponse, error)
+	SetToken(token string)
 }
 
 // Root is a struct of the grpc.
@@ -50,7 +52,7 @@ type Root struct {
 // NewRoot returns a new Root.
 func NewRoot(localStorage LocalStorage, encryption Encryption, api Api) *Root {
 	addService := add.NewService(localStorage, encryption, api)
-	getService := get.NewService(localStorage, encryption)
+	getService := get.NewService(localStorage, encryption, api)
 
 	rootCmd := &cobra.Command{
 		Use:   "gophkeeper",
