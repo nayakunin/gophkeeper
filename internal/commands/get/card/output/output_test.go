@@ -113,8 +113,8 @@ func TestService_MakeResponse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := mocks.NewMockEncryption(ctrl)
 
-			for i, em := range tt.em {
-				e.EXPECT().Decrypt(gomock.Any(), gomock.Any()).Return(em.data, em.err).Times(i + 1)
+			for _, em := range tt.em {
+				e.EXPECT().Decrypt(gomock.Any(), gomock.Any()).Return(em.data, em.err)
 			}
 
 			s := NewService(e)

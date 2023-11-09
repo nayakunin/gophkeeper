@@ -24,7 +24,7 @@ func NewService(encryption Encryption) *Service {
 	}
 }
 
-// MakeResponse prepares a response.
+// CardResult prepares a response.
 type CardResult struct {
 	Name        string `json:"label"`
 	Number      string `json:"number"`

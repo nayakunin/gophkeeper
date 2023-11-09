@@ -17,7 +17,6 @@ func (s *Service) GetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get credentials: %w", err)
 			}
-			s.api.SetToken(token)
 
 			tmpResult, err := input.ParseTextRequest(cmd)
 			if err != nil {
@@ -29,6 +28,7 @@ func (s *Service) GetCmd() *cobra.Command {
 				return fmt.Errorf("could not prepare request: %w", err)
 			}
 
+			s.api.SetToken(token)
 			err = s.api.AddTextData(cmd.Context(), request)
 			if err != nil {
 				return fmt.Errorf("could not add text data: %w", err)

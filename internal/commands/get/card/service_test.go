@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/nayakunin/gophkeeper/internal/commands/get/card/mocks"
+	"github.com/nayakunin/gophkeeper/internal/commands/get/card/output"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
@@ -16,7 +17,8 @@ func TestNewService(t *testing.T) {
 	api := mocks.NewMockApi(ctrl)
 	credentialsService := mocks.NewMockCredentialsService(ctrl)
 	encryption := mocks.NewMockEncryption(ctrl)
-	out := mocks.NewMockOutput(ctrl)
+
+	out := output.NewService(encryption)
 
 	s := NewService(encryption, credentialsService, api)
 

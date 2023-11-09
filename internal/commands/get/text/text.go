@@ -17,8 +17,8 @@ func (s *Service) GetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get token: %w", err)
 			}
-			s.api.SetToken(token)
 
+			s.api.SetToken(token)
 			response, err := s.api.GetTextData(cmd.Context())
 			if err != nil {
 				return fmt.Errorf("could not get text data: %w", err)

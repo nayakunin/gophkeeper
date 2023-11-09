@@ -17,8 +17,8 @@ func (s *Service) GetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get token: %w", err)
 			}
-			s.api.SetToken(token)
 
+			s.api.SetToken(token)
 			response, err := s.api.GetBinaryData(cmd.Context())
 			if err != nil {
 				return fmt.Errorf("could not get binary data: %w", err)
@@ -31,7 +31,7 @@ func (s *Service) GetCmd() *cobra.Command {
 
 			return utils.PrintJSON(results)
 		},
-	} 
+	}
 
 	return cmd
 }

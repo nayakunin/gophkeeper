@@ -18,13 +18,13 @@ func (s *Service) GetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get token: %w", err)
 			}
-			s.api.SetToken(token)
 
 			request, err := input.ParseCardRequest(cmd)
 			if err != nil {
 				return fmt.Errorf("could not parse card request: %w", err)
 			}
 
+			s.api.SetToken(token)
 			response, err := s.api.GetCardDetails(cmd.Context(), request)
 			if err != nil {
 				return fmt.Errorf("could not get card: %w", err)

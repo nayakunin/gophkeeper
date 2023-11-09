@@ -110,6 +110,7 @@ func TestService_GetCmd(t *testing.T) {
 
 			if tt.apiMock != nil {
 				api.EXPECT().GetTextData(gomock.Any()).Return(tt.apiMock.response, tt.apiMock.err)
+				api.EXPECT().SetToken(gomock.Any()).Return()
 			}
 
 			if tt.credentialsMock != nil {
@@ -119,8 +120,6 @@ func TestService_GetCmd(t *testing.T) {
 			if tt.outputMock != nil {
 				out.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.outputMock.response, tt.outputMock.err)
 			}
-
-			api.EXPECT().SetToken(gomock.Any()).Return()
 
 			s := &Service{
 				api:                api,

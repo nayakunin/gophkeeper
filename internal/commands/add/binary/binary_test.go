@@ -132,9 +132,8 @@ func TestService_GetCmd(t *testing.T) {
 
 			if tt.mocks.a != nil {
 				a.EXPECT().AddBinaryData(gomock.Any(), gomock.Any()).Return(tt.mocks.a.err)
+				a.EXPECT().SetToken(gomock.Any()).Return()
 			}
-
-			a.EXPECT().SetToken(gomock.Any()).Return()
 
 			s := &Service{
 				credentialsService: c,

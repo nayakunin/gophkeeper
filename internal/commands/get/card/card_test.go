@@ -135,7 +135,7 @@ func TestService_GetCmd(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cs := mocks.NewMockCredentialsService(ctrl)
 			api := mocks.NewMockApi(ctrl)
-			output := mocks.NewMockOutput(ctrl)
+			out := mocks.NewMockOutput(ctrl)
 			e := mocks.NewMockEncryption(ctrl)
 
 			if tt.cs != nil {
@@ -144,15 +144,19 @@ func TestService_GetCmd(t *testing.T) {
 
 			if tt.api != nil {
 				api.EXPECT().GetCardDetails(gomock.Any(), gomock.Any()).Return(tt.api.response, tt.api.err)
+				api.EXPECT().SetToken(gomock.Any()).Return()
 			}
 
 			if tt.output != nil {
-				output.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.output.response, tt.output.err)
+				out.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.output.response, tt.output.err)
 			}
 
-			api.EXPECT().SetToken(gomock.Any()).Return()
-
-			s := NewService(e, cs, api)
+			s := &Service{
+				credentialsService: cs,
+				api:                api,
+				output:             out,
+				encryption:         e,
+			}
 
 			cmd := s.GetCmd()
 

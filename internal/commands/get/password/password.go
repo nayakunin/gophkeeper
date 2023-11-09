@@ -18,13 +18,13 @@ func (s *Service) GetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get token: %w", err)
 			}
-			s.api.SetToken(token)
 
 			request, err := input.ParsePasswordRequest(cmd)
 			if err != nil {
 				return fmt.Errorf("could not parse request: %w", err)
 			}
 
+			s.api.SetToken(token)
 			response, err := s.api.GetLoginPasswordPairs(cmd.Context(), request)
 			if err != nil {
 				return fmt.Errorf("could not get password: %w", err)

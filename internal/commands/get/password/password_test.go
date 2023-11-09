@@ -33,6 +33,10 @@ func TestService_GetCmd(t *testing.T) {
 		label string
 	}
 
+	defaultArgs := &args{
+		label: "label",
+	}
+
 	tests := []struct {
 		name    string
 		cs      *credentialsServiceMock
@@ -60,6 +64,7 @@ func TestService_GetCmd(t *testing.T) {
 			cs: &credentialsServiceMock{
 				key: []byte("test"),
 			},
+			args: defaultArgs,
 			api: &apiMock{
 				err: assert.AnError,
 			},
@@ -70,6 +75,7 @@ func TestService_GetCmd(t *testing.T) {
 			cs: &credentialsServiceMock{
 				key: []byte("test"),
 			},
+			args: defaultArgs,
 			api: &apiMock{
 				response: &generated.GetLoginPasswordPairsResponse{
 					LoginPasswordPairs: []*generated.LoginPasswordPair{
@@ -94,7 +100,7 @@ func TestService_GetCmd(t *testing.T) {
 			cs := mocks.NewMockCredentialsService(ctrl)
 			e := mocks.NewMockEncryption(ctrl)
 			api := mocks.NewMockApi(ctrl)
-			output := mocks.NewMockOutput(ctrl)
+			out := mocks.NewMockOutput(ctrl)
 
 			if tt.cs != nil {
 				cs.EXPECT().GetCredentials().Return("", tt.cs.key, tt.cs.err)
@@ -102,19 +108,18 @@ func TestService_GetCmd(t *testing.T) {
 
 			if tt.api != nil {
 				api.EXPECT().GetLoginPasswordPairs(gomock.Any(), gomock.Any()).Return(tt.api.response, tt.api.err)
+				api.EXPECT().SetToken(gomock.Any()).Return()
 			}
 
 			if tt.output != nil {
-				output.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.output.response, tt.output.err)
+				out.EXPECT().MakeResponse(gomock.Any(), gomock.Any()).Return(tt.output.response, tt.output.err)
 			}
-
-			api.EXPECT().SetToken(gomock.Any()).Return()
 
 			s := &Service{
 				credentialsService: cs,
 				encryption:         e,
 				api:                api,
-				output:             output,
+				output:             out,
 			}
 
 			cmd := s.GetCmd()

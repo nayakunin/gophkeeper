@@ -44,7 +44,7 @@ func TestNewService(t *testing.T) {
 }
 
 func TestService_Auth(t *testing.T) {
-	t.Skip();
+	t.Skip()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 

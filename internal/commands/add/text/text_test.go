@@ -65,7 +65,7 @@ func TestService_textCmd(t *testing.T) {
 				},
 			},
 			args: &args{
-				text:        "",
+				text: "",
 			},
 			wantErr: assert.Error,
 		},
@@ -133,9 +133,8 @@ func TestService_textCmd(t *testing.T) {
 
 			if tt.mock.apiMock != nil {
 				a.EXPECT().AddTextData(gomock.Any(), gomock.Any()).Return(tt.mock.apiMock.err)
+				a.EXPECT().SetToken(gomock.Any()).Return()
 			}
-
-			a.EXPECT().SetToken(gomock.Any()).Return()
 
 			s := &Service{
 				credentialsService: c,
