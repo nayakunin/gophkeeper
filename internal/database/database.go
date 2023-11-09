@@ -15,78 +15,69 @@ type DBPool interface {
 	Ping(ctx context.Context) error
 }
 
-// InitDBFunc is a function that is used to initialize database
-type InitDBFunc func(conn *pgxpool.Conn) error
-
-type DBStorage struct {
+// Storage is a struct of the database.
+type Storage struct {
 	Pool DBPool
 }
 
-func initDB(conn *pgxpool.Conn) error {
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE users (
-		id SERIAL PRIMARY KEY,
-		username VARCHAR(50) UNIQUE NOT NULL,
-		email VARCHAR(50) UNIQUE NOT NULL,
-		password_hash VARCHAR(256) NOT NULL,
-		created_at TIMESTAMP DEFAULT current_timestamp,
-		updated_at TIMESTAMP DEFAULT current_timestamp
-	)`); err != nil {
-		return fmt.Errorf("create users table: %w", err)
-	}
+func initDB(ctx context.Context, conn *pgxpool.Conn) error {
+	sqlCommands := `
+		CREATE TABLE IF NOT EXISTS users (
+			id SERIAL PRIMARY KEY,
+			username VARCHAR(50) UNIQUE NOT NULL,
+			password_hash BYTEA NOT NULL,
+			encrypted_master_key BYTEA NOT NULL,
+			created_at TIMESTAMP DEFAULT current_timestamp,
+			updated_at TIMESTAMP DEFAULT current_timestamp
+		);
+		CREATE TABLE IF NOT EXISTS login_password_pairs (
+			id SERIAL PRIMARY KEY,
+			user_id INT REFERENCES users(id),
+			service_name VARCHAR(50) NOT NULL,
+			login VARCHAR(50) NOT NULL,
+			encrypted_password BYTEA NOT NULL,
+			description TEXT,
+			created_at TIMESTAMP DEFAULT current_timestamp,
+			updated_at TIMESTAMP DEFAULT current_timestamp
+		);
+		CREATE TABLE IF NOT EXISTS text_data (
+			id SERIAL PRIMARY KEY,
+			user_id INT REFERENCES users(id),
+			description TEXT,
+			encrypted_text BYTEA NOT NULL,
+			created_at TIMESTAMP DEFAULT current_timestamp,
+			updated_at TIMESTAMP DEFAULT current_timestamp
+		);
+		CREATE TABLE IF NOT EXISTS binary_data (
+			id SERIAL PRIMARY KEY,
+			user_id INT REFERENCES users(id),
+			description TEXT,
+			encrypted_data BYTEA NOT NULL,
+			created_at TIMESTAMP DEFAULT current_timestamp,
+			updated_at TIMESTAMP DEFAULT current_timestamp
+		);
+		CREATE TABLE IF NOT EXISTS bank_card_details (
+			id SERIAL PRIMARY KEY,
+			user_id INT REFERENCES users(id),
+			description TEXT,
+			card_name VARCHAR(50) NOT NULL,
+			encrypted_card_number BYTEA NOT NULL,
+			encrypted_expiry_date BYTEA NOT NULL,
+			encrypted_cvc BYTEA NOT NULL,
+			created_at TIMESTAMP DEFAULT current_timestamp,
+			updated_at TIMESTAMP DEFAULT current_timestamp
+		);
+	`
 
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE login_password_pairs (
-		id SERIAL PRIMARY KEY,
-		user_id INT REFERENCES users(id),
-		service_name VARCHAR(50),
-		login VARCHAR(50),
-		password_hash VARCHAR(256),
-		description TEXT,
-		created_at TIMESTAMP DEFAULT current_timestamp,
-		updated_at TIMESTAMP DEFAULT current_timestamp
-	);`); err != nil {
-		return fmt.Errorf("create login_password_pairs table: %w", err)
-	}
-
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE text_data (
-		id SERIAL PRIMARY KEY,
-		user_id INT REFERENCES users(id),
-		description TEXT,
-		encrypted_text TEXT,
-		created_at TIMESTAMP DEFAULT current_timestamp,
-		updated_at TIMESTAMP DEFAULT current_timestamp
-	)`); err != nil {
-		return fmt.Errorf("create text_data table: %w", err)
-	}
-
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE binary_data (
-		id SERIAL PRIMARY KEY,
-		user_id INT REFERENCES users(id),
-		description TEXT,
-		encrypted_data BYTEA,
-		created_at TIMESTAMP DEFAULT current_timestamp,
-		updated_at TIMESTAMP DEFAULT current_timestamp
-	)`); err != nil {
-		return fmt.Errorf("create binary_data table: %w", err)
-	}
-
-	if _, err := conn.Exec(context.Background(), `CREATE TABLE bank_card_details (
-		id SERIAL PRIMARY KEY,
-		user_id INT REFERENCES users(id),
-		description TEXT,
-		card_name VARCHAR(50),
-		encrypted_card_number VARCHAR(50),
-		encrypted_expiry_date VARCHAR(10),
-		encrypted_cvc VARCHAR(5),
-		created_at TIMESTAMP DEFAULT current_timestamp,
-		updated_at TIMESTAMP DEFAULT current_timestamp
-	);`); err != nil {
-		return fmt.Errorf("create bank_card_details table: %w", err)
+	if _, err := conn.Exec(ctx, sqlCommands); err != nil {
+		return fmt.Errorf("create tables: %w", err)
 	}
 
 	return nil
 }
 
-func NewDBStorage(databaseURL string) (*DBStorage, error) {
+// NewStorage creates a new Storage struct
+func NewStorage(ctx context.Context, databaseURL string) (*Storage, error) {
 	pool, err := pgxpool.New(context.Background(), databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("create db pool: %w", err)
@@ -97,11 +88,11 @@ func NewDBStorage(databaseURL string) (*DBStorage, error) {
 		return nil, fmt.Errorf("acquire db connection: %w", err)
 	}
 
-	if err = initDB(conn); err != nil {
+	if err = initDB(ctx, conn); err != nil {
 		return nil, fmt.Errorf("init db: %w", err)
 	}
 
-	return &DBStorage{
+	return &Storage{
 		Pool: pool,
 	}, nil
 }

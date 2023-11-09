@@ -1,0 +1,36 @@
+package registration
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/nayakunin/gophkeeper/constants"
+	api "github.com/nayakunin/gophkeeper/proto"
+)
+
+// RegisterUser registers user.
+func (s *Service) RegisterUser(ctx context.Context, in *api.RegisterUserRequest) (*api.RegisterUserResponse, error) {
+	passwordHash, err := s.auth.HashPassword(in.Password)
+	if err != nil {
+		return nil, fmt.Errorf("unable to hash password: %w", err)
+	}
+
+	encryptedMasterKey, err := s.encryption.Encrypt(in.GetEncryptionKey(), []byte(constants.EncryptionKey))
+	if err != nil {
+		return nil, fmt.Errorf("unable to encrypt master key: %w", err)
+	}
+
+	userID, err := s.storage.CreateUser(ctx, in.Username, passwordHash, encryptedMasterKey)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create user: %w", err)
+	}
+
+	jwtToken, err := s.auth.GenerateJWT(userID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to generate jwt: %w", err)
+	}
+
+	return &api.RegisterUserResponse{
+		Token: jwtToken,
+	}, nil
+}

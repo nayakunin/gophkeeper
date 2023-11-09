@@ -4,63 +4,64 @@ package gophkeeper;
 
 option go_package = "shortener/internal/generated";
 
-// The user service definition
-service UserService {
-  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+// The auth service definition
+service AuthService {
   rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse);
+}
+
+// The registration service definition
+service RegistrationService {
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
 }
 
 // The data service definition
 service DataService {
-  rpc AddLoginPasswordPair (AddLoginPasswordPairRequest) returns (AddLoginPasswordPairResponse);
-  rpc AddTextData (AddTextDataRequest) returns (AddTextDataResponse);
-  rpc AddBinaryData (AddBinaryDataRequest) returns (AddBinaryDataResponse);
-  rpc AddBankCardDetail (AddBankCardDetailRequest) returns (AddBankCardDetailResponse);
-  rpc GetData (GetDataRequest) returns (GetDataResponse);
+  rpc AddLoginPasswordPair (AddLoginPasswordPairRequest) returns (Empty);
+  rpc AddTextData (AddTextDataRequest) returns (Empty);
+  rpc AddBinaryData (AddBinaryDataRequest) returns (Empty);
+  rpc AddBankCardDetail (AddBankCardDetailRequest) returns (Empty);
+  rpc GetLoginPasswordPairs (GetLoginPasswordPairsRequest) returns (GetLoginPasswordPairsResponse);
+  rpc GetTextData (Empty) returns (GetTextDataResponse);
+  rpc GetBinaryData (Empty) returns (GetBinaryDataResponse);
+  rpc GetBankCardDetails (GetBankCardDetailsRequest) returns (GetBankCardDetailsResponse);
 }
 
-// User-related requests and responses
+// Common request and response messages
+message Empty {}
+
+// Registration-related requests and responses
 message RegisterUserRequest {
   string username = 1;
-  string email = 2;
-  string password = 3;
+  string password = 2;
+  bytes encryption_key = 3;
 }
 
 message RegisterUserResponse {
-  string message = 1;
-  bool success = 2;
+  string token = 1;
 }
 
+// Auth-related requests and responses
 message AuthenticateUserRequest {
   string username = 1;
-  string password = 2;
+  bytes password = 2;
 }
 
 message AuthenticateUserResponse {
   string token = 1;
-  bool success = 2;
+  bytes encryption_key = 2;
 }
 
 // Data-related requests and responses
 message AddLoginPasswordPairRequest {
   string service_name = 1;
   string login = 2;
-  string password = 3;
-}
-
-message AddLoginPasswordPairResponse {
-  string message = 1;
-  bool success = 2;
+  bytes encrypted_password = 3;
+  string description = 4;
 }
 
 message AddTextDataRequest {
   string description = 1;
-  string encrypted_text = 2;
-}
-
-message AddTextDataResponse {
-  string message = 1;
-  bool success = 2;
+  bytes encrypted_text = 2;
 }
 
 message AddBinaryDataRequest {
@@ -68,33 +69,63 @@ message AddBinaryDataRequest {
   bytes encrypted_data = 2;
 }
 
-message AddBinaryDataResponse {
-  string message = 1;
-  bool success = 2;
-}
-
 message AddBankCardDetailRequest {
   string card_name = 1;
-  string encrypted_card_number = 2;
-  string encrypted_expiry_date = 3;
-  string encrypted_cvc = 4;
+  bytes encrypted_card_number = 2;
+  bytes encrypted_expiry_date = 3;
+  bytes encrypted_cvc = 4;
+  string description = 5;
 }
 
-message AddBankCardDetailResponse {
-  string message = 1;
-  bool success = 2;
+message GetLoginPasswordPairsRequest {
+  string service_name = 1;
 }
 
-message GetDataRequest {
-  string query = 1;
+message LoginPasswordPair {
+  int64 id = 1;
+  string login = 2;
+  bytes encrypted_password = 3;
+  string description = 4;
+  string service_name = 5;
 }
 
-message GetDataResponse {
-  repeated DataItem data = 1;
+message GetLoginPasswordPairsResponse {
+  repeated LoginPasswordPair login_password_pairs = 1;
 }
 
-message DataItem {
-  string type = 1; // e.g., "LoginPasswordPair", "TextData", etc.
-  string description = 2;
-  string content = 3; // Encrypted data, could also be Base64 encoded if binary
+message GetTextDataResponseItem {
+  int64 id = 1;
+  bytes encrypted_text = 2;
+  string description = 3;
+}
+
+message GetTextDataResponse {
+  repeated GetTextDataResponseItem text_data = 1;
+}
+
+message GetBinaryDataResponseItem {
+  int64 id = 1;
+  bytes encrypted_data = 2;
+  string description = 3;
+}
+
+message GetBinaryDataResponse {
+  repeated GetBinaryDataResponseItem binary_data = 1;
+}
+
+message GetBankCardDetailsRequest {
+  string card_name = 1;
+}
+
+message BankCardDetail {
+  int64 id = 1;
+  string card_name = 2;
+  bytes encrypted_card_number = 3;
+  bytes encrypted_expiry_date = 4;
+  bytes encrypted_cvc = 5;
+  string description = 6;
+}
+
+message GetBankCardDetailsResponse {
+  repeated BankCardDetail bank_card_details = 1;
 }

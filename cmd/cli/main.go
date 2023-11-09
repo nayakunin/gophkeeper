@@ -1,37 +1,24 @@
 package main
 
 import (
-	"context"
-	"log"
-
-	api "github.com/nayakunin/gophkeeper/proto"
-	"google.golang.org/grpc"
+	"github.com/nayakunin/gophkeeper/internal/commands"
+	"github.com/nayakunin/gophkeeper/internal/commands/transport"
+	"github.com/nayakunin/gophkeeper/internal/services/credentials"
+	"github.com/nayakunin/gophkeeper/internal/services/encryption"
+	"github.com/nayakunin/gophkeeper/internal/services/localstorage"
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	credentialsService, err := credentials.NewService()
 	if err != nil {
-		log.Fatalf("Could not connect: %v", err)
-	}
-	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
-		if err != nil {
-			log.Fatalf("Could not close connection: %v", err)
-		}
-	}(conn)
-
-	userClient := api.NewUserServiceClient(conn)
-
-	response, err := userClient.RegisterUser(context.Background(), &api.RegisterUserRequest{
-		Username: "username",
-		Email:    "email@example.com",
-		Password: "password",
-	})
-	if err != nil {
-		log.Fatalf("Could not register user: %v", err)
+		panic(err)
 	}
 
-	log.Printf("Registration result: %s", response.GetMessage())
+	localStorageService := localstorage.NewStorage(credentialsService)
+	encryptionService := encryption.NewService()
+	apiService := transport.NewService()
 
-	// Implement other service calls similarly
+	root := commands.NewRoot(localStorageService, encryptionService, apiService)
+
+	root.Execute()
 }
